@@ -17,6 +17,11 @@ const InitialState = {
         loading: false,
         error: null,
         data: {}
+    },
+    TokenValidation: {
+        loading: true,
+        error: null,
+        data: {}
     }
 }
 
@@ -28,7 +33,8 @@ const Reducers = {
             case LOGIN_START: {
                 return {
                     ...state,
-                    loading: true
+                    loading: true,
+                    error: null
                 }
             }
             case LOGIN_SUCCESS: {
@@ -73,6 +79,28 @@ const Reducers = {
     },
     Events: (state = InitialState.Events, action) => {
         switch (action.type) {
+            default: return state
+        }
+    },
+    TokenValidation: (state = InitialState.TokenValidation, action) => {
+        const { payload } = action
+        switch (action.type) {
+            case ActionTypes.TOKEN_VALID_SUCCESS: {
+                return {
+                    ...state,
+                    loading: false,
+                    error: null,
+                    data: payload
+                }
+            }
+            case ActionTypes.TOKEN_VALID_FAIL: {
+                return {
+                    ...state,
+                    loading: false,
+                    error: payload,
+                    data: {allowed: false}
+                }
+            }
             default: return state
         }
     }

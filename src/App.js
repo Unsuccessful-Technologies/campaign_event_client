@@ -10,6 +10,7 @@ import Login from "./pages/Login";
 import EventPages from "./pages/EventPages";
 import SearchResults from "./pages/SearchResults";
 import MemberProfile from "./pages/MemberProfile";
+import CustomProvider from "./components/hoc/CustomProvider";
 
 function App() {
     const HeaderRef = forwardRef(Header)
@@ -22,23 +23,21 @@ function App() {
     }, [HeaderElement])
 
     return (
-        <Provider store={store}>
-            <Router>
+        <CustomProvider>
                 <div id={'app'} className="site container d-flex flex-column align-items-center" style={{marginTop: `${HeaderHeight}px`,paddingTop: `${HeaderHeight/2}px`, backgroundColor:"#222222", minHeight:"100%"}}>
                     <HeaderRef ref={HeaderElement}/>
                         <div className={"flex-grow-1 w-100"}>
                             <Switch>
                                 <Route path="/" exact><Home/></Route>
                                 <Route path="/login" exact><Login/></Route>
-                                <Route path="/events" exact><EventPages/></Route>
-                                <Route path="/search" exact><SearchResults/></Route>
-                                <Route path="/profile" exact><MemberProfile/></Route>
+                                <Route path="/events"><EventPages/></Route>
+                                <Route path="/search"><SearchResults/></Route>
+                                <Route path="/profile"><MemberProfile/></Route>
                             </Switch>
                         </div>
                     <Footer/>
                 </div>
-            </Router>
-        </Provider>
+        </CustomProvider>
     );
 }
 

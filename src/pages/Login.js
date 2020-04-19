@@ -2,6 +2,7 @@ import React, {useEffect, useReducer} from 'react';
 import { useHistory } from "react-router-dom";
 import {useSelector, useDispatch} from "react-redux";
 import {SubmitLogin} from "../store/actions";
+import Loading from "./common/Loading";
 
 function Login(props) {
     const User = useSelector(state => state.User)
@@ -34,7 +35,7 @@ function Login(props) {
         }
     }, [User, history])
 
-    return (User.loading) ? (<div className={"loader"}>Loading...</div>) : (
+    return (User.loading) ? (<Loading><h1>Loading...</h1></Loading>) : (
         <div {...props} className="home-container container-fluid">
             <h1>Login</h1>
             <div className={"d-flex flex-column justify-content-center"}>
