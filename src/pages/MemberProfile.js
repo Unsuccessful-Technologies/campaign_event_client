@@ -1,10 +1,16 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {useHistory} from "react-router-dom";
-import {useSelector} from "react-redux";
+import {useSelector, useDispatch} from "react-redux";
 
 function MemberProfile(props) {
     const User = useSelector(state => state.User)
+    const dispatch = useDispatch()
     const { fName, lName, email, phone } = User.data
+
+    useEffect(() => {
+        const { token } = User
+    }, [])
+
     return (
         <div {...props} className="home-container container-fluid">
             <h1>Member Profile</h1>

@@ -7,6 +7,16 @@ const InitialState = {
         error: null,
         data: {},
         token: null
+    },
+    Organizations: {
+        loading: false,
+        error: null,
+        data: {}
+    },
+    Events: {
+        loading: false,
+        error: null,
+        data: {}
     }
 }
 
@@ -53,6 +63,16 @@ const Reducers = {
             case LOGOUT: {
                 return InitialState.User
             }
+            default: return state
+        }
+    },
+    Organizations: (state = InitialState.Organizations, action) => {
+        switch (action.type) {
+            default: return state
+        }
+    },
+    Events: (state = InitialState.Events, action) => {
+        switch (action.type) {
             default: return state
         }
     }
