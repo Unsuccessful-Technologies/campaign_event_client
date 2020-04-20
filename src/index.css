@@ -24,6 +24,14 @@ code {
     monospace;
 }
 
+#app {
+  background-color: #222222;
+}
+
+#login-card {
+  background-color: #333333;
+}
+
 .loader,
 .loader:after {
   border-radius: 50%;

@@ -1,5 +1,5 @@
 import React, {useEffect, useReducer} from 'react';
-import { useHistory } from "react-router-dom";
+import {Link, useHistory} from "react-router-dom";
 import {useSelector, useDispatch} from "react-redux";
 import {SubmitLogin} from "../store/actions";
 import Loading from "./common/Loading";
@@ -37,17 +37,25 @@ function Login(props) {
 
     return (User.loading) ? (<Loading><h1>Loading...</h1></Loading>) : (
         <div {...props} className="home-container container-fluid">
-            <h1>Login</h1>
-            <div className={"d-flex flex-column justify-content-center"}>
-                <input id={"email"} className={"form-control"} placeholder={"email"} onChange={InputChangeHandler} value={FormState.email.value}/>
-                <input id={"password"} type={"password"} className={"form-control"} placeholder={"password"} onChange={InputChangeHandler} value={FormState.password.value}/>
+            <div id={"login-card"} className={"card p-4 shadow w-50 m-auto"}>
+                <h1>Login</h1>
+                <div className={"d-flex flex-column justify-content-center align-items-center p-2"}>
+                    <input id={"email"} className={"form-control m-2"} placeholder={"email"} onChange={InputChangeHandler} value={FormState.email.value}/>
+                    <input id={"password"} type={"password"} className={"form-control m-2"} placeholder={"password"} onChange={InputChangeHandler} value={FormState.password.value}/>
+                </div>
+                <button className={"btn btn-success w-50 m-auto"} onClick={HandleLoginButton}>
+                    Login
+                </button>
+                {
+                    (User.error) ? <p>{User.error}</p> : null
+                }
             </div>
-            <button className={"btn btn-success"} onClick={HandleLoginButton}>
-                Login
-            </button>
-            {
-                (User.error) ? <p>{User.error}</p> : null
-            }
+            <h4 className={"text-center m-3 font-italic"}>OR</h4>
+            <div className={"w-50 m-auto p-4"}>
+                <Link to={"/join"}>
+                    <button className={'btn btn-warning w-100'}>Join</button>
+                </Link>
+            </div>
         </div>
     );
 }
