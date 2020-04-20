@@ -1,5 +1,5 @@
 import React, {useEffect, useReducer} from 'react';
-import {Link, useHistory} from "react-router-dom";
+import {Link, useHistory, useLocation} from "react-router-dom";
 import {useSelector, useDispatch} from "react-redux";
 import {SubmitLogin} from "../store/actions";
 import Loading from "./common/Loading";
@@ -8,6 +8,7 @@ function Login(props) {
     const User = useSelector(state => state.User)
     const dispatch = useDispatch()
     const [FormState, FormDispatch] = useReducer(FormReducer, initialFormState)
+    const location = useLocation()
     const history = useHistory()
 
     const InputChangeHandler = (e) => {
@@ -31,9 +32,13 @@ function Login(props) {
 
     useEffect(() => {
         if(User.token){
-            history.push("/profile")
+            if(location.state && location.state.returnTo){
+                history.push(location.state.returnTo)
+            } else {
+                history.push("/profile")
+            }
         }
-    }, [User, history])
+    }, [User, history, location])
 
     return (User.loading) ? (<Loading><h1>Loading...</h1></Loading>) : (
         <div {...props} className="home-container container-fluid">

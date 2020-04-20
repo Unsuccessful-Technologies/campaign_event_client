@@ -32,6 +32,10 @@ code {
   background-color: #333333;
 }
 
+.dark-bg {
+  background-color: #333333;
+}
+
 .loader,
 .loader:after {
   border-radius: 50%;
