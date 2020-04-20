@@ -8,6 +8,11 @@ const InitialState = {
         data: {},
         token: null
     },
+    Join: {
+        loading: false,
+        error: null,
+        data: {}
+    },
     Organizations: {
         loading: false,
         error: null,
@@ -74,6 +79,35 @@ const Reducers = {
     },
     Organizations: (state = InitialState.Organizations, action) => {
         switch (action.type) {
+            default: return state
+        }
+    },
+    Join: (state = InitialState.Join, action) => {
+        const {JOIN_START, JOIN_SUCCESS, JOIN_FAIL} = ActionTypes
+        const {payload} = action
+        switch (action.type) {
+            case JOIN_START: {
+                return {
+                    ...state,
+                    loading: true,
+                    error: null
+                }
+            }
+            case JOIN_SUCCESS: {
+                return {
+                    ...state,
+                    loading: false,
+                    data: payload,
+                    error: null
+                }
+            }
+            case JOIN_FAIL: {
+                return {
+                    ...state,
+                    loading: false,
+                    error: payload
+                }
+            }
             default: return state
         }
     },

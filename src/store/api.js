@@ -4,5 +4,6 @@ const URL = config.api_url
 
 export default {
     LoginURL: `${URL}/auth/login`,
+    JoinURL: `${URL}/auth/join`,
     TokenValidateURL: (id) => `${URL}/auth/token/valid/${id}`
 }

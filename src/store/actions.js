@@ -5,6 +5,9 @@ export const ActionTypes = {
     LOGIN_SUCCESS: "LOGIN_SUCCESS",
     LOGIN_FAIL: "LOGIN_FAIL",
     LOGOUT: "LOGOUT",
+    JOIN_START: "JOIN_START",
+    JOIN_SUCCESS: "JOIN_SUCCESS",
+    JOIN_FAIL: "JOIN_FAIL",
     TOKEN_VALID_START: "TOKEN_VALID_START",
     TOKEN_VALID_SUCCESS: "TOKEN_VALID_SUCCESS",
     TOKEN_VALID_FAIL: "TOKEN_VALID_FAIL"
@@ -33,6 +36,36 @@ export const SubmitLogin = (payload) => {
         }
     }
 }
+
+export const SubmitJoin = (payload) => {
+    return async (dispatch) => {
+        dispatch({type: ActionTypes.JOIN_START})
+        const options = {
+            method: "POST",
+            headers: {
+                "Content-Type":"application/json"
+            },
+            body: JSON.stringify(payload)
+        }
+        try {
+            const response = await fetch(API.JoinURL, options)
+            if(response.status !== 200) {
+                throw new Error('Join response status is ' + response.status)
+            }
+            const result = await response.json()
+            const {success} = result
+            if(success){
+                return dispatch({type: ActionTypes.JOIN_SUCCESS, payload: result})
+            } else {
+                return dispatch({type: ActionTypes.JOIN_FAIL, payload: result.message})
+            }
+        } catch (e) {
+            console.log(e)
+            return dispatch({type: ActionTypes.JOIN_FAIL, payload: e.message})
+        }
+    }
+}
+
 
 export const ValidateToken = (payload) => {
     console.debug('ValidateToken',payload)

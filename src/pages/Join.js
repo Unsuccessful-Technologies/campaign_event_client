@@ -1,11 +1,12 @@
 import React, {useEffect, useReducer} from 'react';
-import {Link, useHistory} from "react-router-dom";
+import {Link, useHistory, useLocation} from "react-router-dom";
 import {useSelector, useDispatch} from "react-redux";
-import {SubmitLogin} from "../store/actions";
+import {SubmitJoin} from "../store/actions";
 import Loading from "./common/Loading";
 
 function Join(props) {
-    const User = useSelector(state => state.User)
+    const Join = useSelector(state => state.Join)
+    const location = useLocation()
     const dispatch = useDispatch()
     const [FormState, FormDispatch] = useReducer(FormReducer, initialFormState)
     const history = useHistory()
@@ -31,16 +32,24 @@ function Join(props) {
         Object.keys(FormState).forEach(key => {
             payload[key] = FormState[key].value
         })
-        console.log(payload)
+        dispatch(SubmitJoin(payload))
     }
 
     useEffect(() => {
-        if(User.token){
-            history.push("/profile")
+        if(Join.data.success){
+            history.push({ pathname: "/login", state: location.state })
         }
-    }, [User, history])
+    }, [Join, location, history])
 
-    return (User.loading) ? (<Loading><h1>Loading...</h1></Loading>) : (
+    useEffect(() => {
+        if(Join.error){
+            FormDispatch({
+                type: "reset"
+            })
+        }
+    }, [Join.error])
+
+    return (Join.loading) ? (<Loading><h1>Loading...</h1></Loading>) : (
         <div {...props} className="home-container container-fluid">
             <div id={"login-card"} className={"card p-4 shadow w-50 m-auto"}>
                 <h1>Join</h1>
@@ -55,7 +64,7 @@ function Join(props) {
                     Join
                 </button>
                 {
-                    (User.error) ? <p>{User.error}</p> : null
+                    (Join.error) ? <p className={"text-danger"}>{Join.error}</p> : null
                 }
             </div>
             <h4 className={"text-center m-3 font-italic"}>OR</h4>
