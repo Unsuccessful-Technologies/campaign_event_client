@@ -16,12 +16,12 @@ const InitialState = {
     Organizations: {
         loading: false,
         error: null,
-        data: {}
+        data: []
     },
     Events: {
         loading: false,
         error: null,
-        data: {}
+        data: []
     },
     TokenValidation: {
         loading: true,

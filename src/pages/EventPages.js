@@ -9,7 +9,7 @@ function EventPages(props) {
     return (
         <div {...props} className="home-container container-fluid">
             <Switch>
-                <Route exact path={path}>
+                <Route path={`${path}/newevent`}>
                     <NewEvent/>
                 </Route>
                 <Route exact path={`${path}/public/:event_id`}>
