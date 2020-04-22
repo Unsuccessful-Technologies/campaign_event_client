@@ -1,24 +1,29 @@
-import React, {useReducer} from 'react';
-import {useSelector} from "react-redux";
-import {Switch, Route, Link, useRouteMatch, useParams} from "react-router-dom";
+import React, {useEffect, useReducer} from 'react';
+import {useDispatch, useSelector} from "react-redux";
+import {Switch, Route, Link, useRouteMatch, useParams, useHistory} from "react-router-dom";
+import {SubmitEvent} from "../store/actions";
+import Loading from "./common/Loading";
 
 function NewEvent(props) {
     const routeMatch = useRouteMatch()
+    const history = useHistory()
     const User = useSelector(state => state.User)
     return (
         <div {...props} className="home-container container-fluid">
             <h1 className={'text-center'}>Create an Event!</h1>
             {
-                (User.token) ? <LoggedIn routeMatch={routeMatch} token={User.token}/> : <NoLogIn routeMatch={routeMatch}/>
+                (User.token) ? <LoggedIn routeMatch={routeMatch} token={User.token} history={history}/> : <NoLogIn routeMatch={routeMatch}/>
             }
         </div>
     );
 }
 
 function LoggedIn(props){
-    const {routeMatch, token} = props
+    const {routeMatch, token, history} = props
     const {url, path} = routeMatch
     const [NewEventForm, NewEventDispatch] = useReducer(FormReducer, initialFormState)
+    const Events = useSelector(state => state.Events)
+    const dispatch = useDispatch()
 
     const HandleSubmit = () => {
         const result = {
@@ -37,6 +42,17 @@ function LoggedIn(props){
             })
         }
         console.log(result)
+        dispatch(SubmitEvent(result))
+    }
+
+    useEffect(() => {
+        if(Events.data.success){
+            history.push("/profile")
+        }
+    }, [Events])
+
+    if(Events.loading){
+        return (<Loading><h1>Creating New Event...</h1></Loading>)
     }
 
     return (

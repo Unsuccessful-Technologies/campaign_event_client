@@ -10,7 +10,10 @@ export const ActionTypes = {
     JOIN_FAIL: "JOIN_FAIL",
     TOKEN_VALID_START: "TOKEN_VALID_START",
     TOKEN_VALID_SUCCESS: "TOKEN_VALID_SUCCESS",
-    TOKEN_VALID_FAIL: "TOKEN_VALID_FAIL"
+    TOKEN_VALID_FAIL: "TOKEN_VALID_FAIL",
+    NEW_EVENT_START: "NEW_EVENT_START",
+    NEW_EVENT_SUCCESS: "NEW_EVENT_SUCCESS",
+    NEW_EVENT_FAIL: "NEW_EVENT_FAIL"
 }
 
 export const SubmitLogin = (payload) => {
@@ -62,6 +65,35 @@ export const SubmitJoin = (payload) => {
         } catch (e) {
             console.log(e)
             return dispatch({type: ActionTypes.JOIN_FAIL, payload: e.message})
+        }
+    }
+}
+
+export const SubmitEvent = (payload) => {
+    return async (dispatch) => {
+        dispatch({type: ActionTypes.NEW_EVENT_START})
+        const options = {
+            method: "POST",
+            headers: {
+                "Content-Type":"application/json"
+            },
+            body: JSON.stringify(payload)
+        }
+        try {
+            const response = await fetch(API.EventsURL, options)
+            if(response.status !== 200) {
+                throw new Error('Create Event response status is ' + response.status)
+            }
+            const result = await response.json()
+            const {success} = result
+            if(success){
+                return dispatch({type: ActionTypes.NEW_EVENT_SUCCESS, payload: result})
+            } else {
+                return dispatch({type: ActionTypes.NEW_EVENT_FAIL, payload: result.message})
+            }
+        } catch (e) {
+            console.log(e)
+            return dispatch({type: ActionTypes.NEW_EVENT_FAIL, payload: e.message})
         }
     }
 }
