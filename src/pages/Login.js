@@ -3,6 +3,7 @@ import {Link, useHistory, useLocation} from "react-router-dom";
 import {useSelector, useDispatch} from "react-redux";
 import {SubmitLogin} from "../store/actions";
 import Loading from "./common/Loading";
+import FeedBackModal from "../components/FeedBackModal";
 
 function Login(props) {
     const User = useSelector(state => state.User)
@@ -40,8 +41,16 @@ function Login(props) {
         }
     }, [User, history, location])
 
+    if(User.error){
+        console.log(User)
+    }
+
     return (User.loading) ? (<Loading><h1>Loading...</h1></Loading>) : (
         <div {...props} className="home-container container-fluid">
+            {
+                (User.error) ?
+                    <FeedBackModal title={'An Error Occurred'} message={User.error.message} addTitleClass={["text-danger"]}/> : ""
+            }
             <div id={"login-card"} className={"card p-4 shadow w-50 m-auto"}>
                 <h1>Login</h1>
                 <div className={"d-flex flex-column justify-content-center align-items-center p-2"}>
@@ -51,9 +60,6 @@ function Login(props) {
                 <button className={"btn btn-success w-50 m-auto"} onClick={HandleLoginButton}>
                     Login
                 </button>
-                {
-                    (User.error) ? <p>{User.error}</p> : null
-                }
             </div>
             <h4 className={"text-center m-3 font-italic"}>OR</h4>
             <div className={"w-50 m-auto p-4"}>

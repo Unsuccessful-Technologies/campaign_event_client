@@ -34,7 +34,7 @@ const InitialState = {
 
 const Reducers = {
     User: (state = InitialState.User, action) => {
-        const {LOGIN_START, LOGIN_SUCCESS, LOGIN_FAIL, LOGOUT} = ActionTypes
+        const {LOGIN_START, LOGIN_SUCCESS, LOGIN_FAIL, LOGOUT, GET_PROFILE_START, GET_PROFILE_SUCCESS, GET_PROFILE_FAIL} = ActionTypes
         const {payload} = action
         switch (action.type) {
             case LOGIN_START: {
@@ -76,33 +76,39 @@ const Reducers = {
             case LOGOUT: {
                 return InitialState.User
             }
+            case GET_PROFILE_START: {
+                return {
+                    ...state,
+                    loading: true
+                }
+            }
+            case GET_PROFILE_SUCCESS: {
+                return {
+                    ...state,
+                    loading: false,
+                    error: null
+                }
+            }
+            case GET_PROFILE_FAIL: {
+                return {
+                    ...state,
+                    loading: false,
+                    error: payload
+                }
+            }
             default: return state
         }
     },
     Organizations: (state = InitialState.Organizations, action) => {
-        const {ORGS_START, ORGS_SUCCESS, ORGS_FAIL} = ActionTypes
+        const {SET_MY_ORGS} = ActionTypes
         const {payload} = action
         switch (action.type) {
-            case ORGS_START: {
-                return {
-                    ...state,
-                    loading: true,
-                    error: null
-                }
-            }
-            case ORGS_SUCCESS: {
+            case SET_MY_ORGS: {
                 return {
                     ...state,
                     loading: false,
                     data: payload,
                     error: null
-                }
-            }
-            case ORGS_FAIL: {
-                return {
-                    ...state,
-                    loading: false,
-                    error: payload
                 }
             }
             default: return state

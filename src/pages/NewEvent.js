@@ -1,7 +1,7 @@
 import React, {useEffect, useReducer} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import {Switch, Route, Link, useRouteMatch, useParams, useHistory} from "react-router-dom";
-import {ActionTypes, SubmitEvent} from "../store/actions";
+import {ActionTypes, GetProfile, SubmitEvent} from "../store/actions";
 import Loading from "./common/Loading";
 
 function NewEvent(props) {
@@ -28,26 +28,23 @@ function LoggedIn(props){
     const HandleSubmit = () => {
         const result = {
             token,
-            event:{}
+            event:{},
+            organization:{},
+            organization_id: NewEventForm.organization_id
         }
         Object.keys(NewEventForm.event).map(key => {
             result.event[key] = NewEventForm.event[key].value
         })
-        if(NewEventForm.organization_id){
-            result.organization_id = NewEventForm.organization_id
-        } else {
-            result.organization = {}
-            Object.keys(NewEventForm.organization).map(key => {
-                result.organization[key] = NewEventForm.organization[key].value
-            })
-        }
+        Object.keys(NewEventForm.organization).map(key => {
+            result.organization[key] = NewEventForm.organization[key].value
+        })
         console.log(result)
         dispatch(SubmitEvent(result))
     }
 
     useEffect(() => {
         if(Events.new_event && Events.new_event.success){
-            // TODO Fetch Orgs and Events for User
+            dispatch(GetProfile())
             history.push("/profile")
         }
     }, [Events.new_event])
@@ -109,34 +106,36 @@ function ChoseOrg(props){
     return (
         <div>
             <div>
-                {
-                    (org_data.length > 0) ?
-                        <div className={'card d-flex flex-column p-4 dark-bg'}>
-                            <div className={'card-header'}>
-                                <h3>Select An Organization</h3>
-                            </div>
-                            <div className={"card-body d-flex flex-row flex-wrap justify-content-center"}>
-                                <div style={{cursor:"pointer",overflow:"hidden",whiteSpace: "nowrap",textOverflow:"ellipsis"}} className={`card d-flex flex-column p-4 m-1 shadow-lg w-25 h-100 ${(NewEventForm.organization_id === 'new') ? "text-dark": "dark-bg"}`} onClick={() => SelectOrg("new")}>
-                                    <h6 className={"text-center"}>Add New</h6>
-                                </div>
-                                {
-                                    org_data.map(x => {
-                                        return (
-                                            <div style={{cursor:"pointer",overflow:"hidden",whiteSpace: "nowrap",textOverflow:"ellipsis"}} className={`card d-flex flex-column p-4 ${(NewEventForm.organization_id === x._id) ? "text-dark": "dark-bg"} shadow-lg w-25 h-100 m-1`} onClick={() => SelectOrg(x._id)}>
-                                                <h6 className={"text-center"}>{x.name}</h6>
-                                            </div>
-                                        )
-                                    })
-                                }
-                            </div>
+                <div className={'card d-flex flex-column p-4 dark-bg'}>
+                    <div className={'card-header'}>
+                        <h3>Select An Organization</h3>
+                    </div>
+                    <div className={"card-body d-flex flex-row flex-wrap justify-content-center"}>
+                        <div
+                            style={{cursor:"pointer",overflow:"hidden",whiteSpace: "nowrap",textOverflow:"ellipsis"}}
+                            className={`card d-flex flex-column p-4 m-1 shadow-lg w-25 h-100 ${(organization_id === 'new') ? "text-dark": "dark-bg"}`}
+                            onClick={() => SelectOrg("new")}
+                        >
+                            <h6 className={"text-center"}>Add New</h6>
                         </div>
-                    :
-                        <div></div>
-                }
+                        {
+                            org_data.map(x => {
+                                return (
+                                    <div
+                                        style={{cursor:"pointer",overflow:"hidden",whiteSpace: "nowrap",textOverflow:"ellipsis"}}
+                                        className={`card d-flex flex-column p-4 ${(organization_id === x._id) ? "text-dark": "dark-bg"} shadow-lg w-25 h-100 m-1`}
+                                        onClick={() => SelectOrg(x._id)}>
+                                        <h6 className={"text-center"}>{x.name}</h6>
+                                    </div>
+                                )
+                            })
+                        }
+                    </div>
+                </div>
             </div>
             <div>
                 {
-                    (NewEventForm.organization_id === 'new') ?
+                    (organization_id === 'new') ?
                         <div className={'card d-flex flex-column p-4 dark-bg'}>
                             <div className={'card-header'}>
                                 <h3>Create New Organization</h3>

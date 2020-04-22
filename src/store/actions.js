@@ -8,6 +8,9 @@ export const ActionTypes = {
     JOIN_START: "JOIN_START",
     JOIN_SUCCESS: "JOIN_SUCCESS",
     JOIN_FAIL: "JOIN_FAIL",
+    GET_PROFILE_START: "GET_PROFILE_START",
+    GET_PROFILE_SUCCESS: "GET_PROFILE_SUCCESS",
+    GET_PROFILE_FAIL: "GET_PROFILE_FAIL",
     TOKEN_VALID_START: "TOKEN_VALID_START",
     TOKEN_VALID_SUCCESS: "TOKEN_VALID_SUCCESS",
     TOKEN_VALID_FAIL: "TOKEN_VALID_FAIL",
@@ -17,9 +20,7 @@ export const ActionTypes = {
     NEW_EVENT_SUCCESS: "NEW_EVENT_SUCCESS",
     NEW_EVENT_CLEAR: "NEW_EVENT_CLEAR",
     GET_EVENT_SUCCESS: "GET_EVENT_SUCCESS",
-    ORGS_START: "ORGS_START",
-    ORGS_SUCCESS: "ORGS_SUCCESS",
-    ORGS_FAIL: "ORGS_FAIL"
+    SET_MY_ORGS: "SET_MY_ORGS",
 }
 
 export const SubmitLogin = (payload) => {
@@ -34,17 +35,19 @@ export const SubmitLogin = (payload) => {
         }
         try {
             const response = await fetch(API.LoginURL, options)
-            if(response.status !== 200) {
-                throw new Error('Login response status is ' + response.status)
-            }
             const result = await response.json()
+            if(response.status !== 200) {
+                const error = new Error(result.message)
+                error.status = response.status
+                throw error
+            }
             const {user, events, organizations, token} = result
             dispatch({type: ActionTypes.SET_MY_EVENTS, payload: events})
-            dispatch({type: ActionTypes.ORGS_SUCCESS, payload: organizations})
+            dispatch({type: ActionTypes.SET_MY_ORGS, payload: organizations})
             return dispatch({type: ActionTypes.LOGIN_SUCCESS, payload: {user, token}})
         } catch (e) {
             console.log(e)
-            return dispatch({type: ActionTypes.LOGIN_FAIL, payload: e.message})
+            return dispatch({type: ActionTypes.LOGIN_FAIL, payload: e})
         }
     }
 }
@@ -158,6 +161,36 @@ export const ViewEvent = (payload) => {
         }
     }
 
+}
+
+export const GetProfile = () => {
+    return async (dispatch, getState) => {
+        dispatch({type: ActionTypes.GET_PROFILE_START})
+        const token = getState().User.token
+        const options = {
+            method: "GET",
+            headers: {
+                "Content-Type":"application/json",
+                "token": token
+            }
+        }
+        try {
+            const response = await fetch(API.ProfileURL, options)
+            const result = await response.json()
+            if(response.status !== 200) {
+                const error = new Error(result.message)
+                error.status = response.status
+                throw error
+            }
+            const {events, organizations} = result
+            dispatch({type: ActionTypes.SET_MY_EVENTS, payload: events})
+            dispatch({type: ActionTypes.SET_MY_ORGS, payload: organizations})
+            return dispatch({type: ActionTypes.GET_PROFILE_SUCCESS})
+        } catch (e) {
+            console.log(e)
+            return dispatch({type: ActionTypes.GET_PROFILE_FAIL, payload: e})
+        }
+    }
 }
 
 
