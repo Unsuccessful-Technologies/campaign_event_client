@@ -44,15 +44,15 @@ const Reducers = {
             }
             case LOGIN_SUCCESS: {
                 try {
-                    const { data, token } = payload
-                    if(!data || !token){
+                    const { user, token } = payload
+                    if(!user || !token){
                         throw new Error('Login Failed: No Data or Token')
                     } else {
                         return {
                             ...state,
                             loading: false,
                             error: null,
-                            data,
+                            data: user,
                             token
                         }
                     }
@@ -78,7 +78,31 @@ const Reducers = {
         }
     },
     Organizations: (state = InitialState.Organizations, action) => {
+        const {ORGS_START, ORGS_SUCCESS, ORGS_FAIL} = ActionTypes
+        const {payload} = action
         switch (action.type) {
+            case ORGS_START: {
+                return {
+                    ...state,
+                    loading: true,
+                    error: null
+                }
+            }
+            case ORGS_SUCCESS: {
+                return {
+                    ...state,
+                    loading: false,
+                    data: payload,
+                    error: null
+                }
+            }
+            case ORGS_FAIL: {
+                return {
+                    ...state,
+                    loading: false,
+                    error: payload
+                }
+            }
             default: return state
         }
     },

@@ -13,7 +13,10 @@ export const ActionTypes = {
     TOKEN_VALID_FAIL: "TOKEN_VALID_FAIL",
     NEW_EVENT_START: "NEW_EVENT_START",
     NEW_EVENT_SUCCESS: "NEW_EVENT_SUCCESS",
-    NEW_EVENT_FAIL: "NEW_EVENT_FAIL"
+    NEW_EVENT_FAIL: "NEW_EVENT_FAIL",
+    ORGS_START: "ORGS_START",
+    ORGS_SUCCESS: "ORGS_SUCCESS",
+    ORGS_FAIL: "ORGS_FAIL"
 }
 
 export const SubmitLogin = (payload) => {
@@ -32,7 +35,10 @@ export const SubmitLogin = (payload) => {
                 throw new Error('Login response status is ' + response.status)
             }
             const result = await response.json()
-            return dispatch({type: ActionTypes.LOGIN_SUCCESS, payload: result})
+            const {user, events, organizations, token} = result
+            dispatch({type: ActionTypes.NEW_EVENT_SUCCESS, payload: events})
+            dispatch({type: ActionTypes.ORGS_SUCCESS, payload: organizations})
+            return dispatch({type: ActionTypes.LOGIN_SUCCESS, payload: {user, token}})
         } catch (e) {
             console.log(e)
             return dispatch({type: ActionTypes.LOGIN_FAIL, payload: e.message})

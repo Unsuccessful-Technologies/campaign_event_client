@@ -47,6 +47,7 @@ function LoggedIn(props){
 
     useEffect(() => {
         if(Events.data.success){
+            // TODO Fetch Orgs and Events for User
             history.push("/profile")
         }
     }, [Events])
