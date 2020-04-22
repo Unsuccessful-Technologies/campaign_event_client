@@ -129,7 +129,6 @@ export const ViewEvent = (payload) => {
     return async (dispatch, getState) => {
         dispatch({type: ActionTypes.EVENT_START})
         const state = getState()
-        console.log(state)
         if(EventIsLocal(state.Events,event_id)){
             const event = state.Events.my_events.filter(x => x._id === event_id)[0]
             dispatch({type:ActionTypes.GET_EVENT_SUCCESS, payload: event})

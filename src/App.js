@@ -18,8 +18,8 @@ function App() {
     const HeaderRef = forwardRef(Header)
     const HeaderElement = createRef()
     const [HeaderHeight, SetHeaderHeight] = useState(0)
+
     useEffect(() => {
-        console.log(HeaderElement.current.offsetHeight)
         SetHeaderHeight(HeaderElement.current.offsetHeight)
     }, [HeaderElement])
 
