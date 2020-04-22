@@ -1,7 +1,7 @@
 import React, {useEffect, useReducer} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import {Switch, Route, Link, useRouteMatch, useParams, useHistory} from "react-router-dom";
-import {SubmitEvent} from "../store/actions";
+import {ActionTypes, SubmitEvent} from "../store/actions";
 import Loading from "./common/Loading";
 
 function NewEvent(props) {
@@ -52,6 +52,11 @@ function LoggedIn(props){
         }
     }, [Events.new_event])
 
+    useEffect(() => {
+        console.log('Clearing NEW EVENT')
+        dispatch({type: ActionTypes.NEW_EVENT_CLEAR})
+    }, [])
+
     if(Events.loading){
         return (<Loading><h1>Creating New Event...</h1></Loading>)
     }
@@ -93,16 +98,12 @@ function ChoseOrg(props){
         NewEventDispatch(action)
     }
 
-    const ChoseExistingOrg = (id) => {
+    const SelectOrg = (id) => {
         const action = {
-            type: "organization_id",
+            type: "select_org",
             payload: id
         }
         NewEventDispatch(action)
-    }
-
-    const ClearOrgId = () => {
-        NewEventDispatch({type:"clear_org_id"})
     }
 
     return (
@@ -110,29 +111,32 @@ function ChoseOrg(props){
             <div>
                 {
                     (org_data.length > 0) ?
-                        <ul>
-                            {
-                                org_data.map(x => {
-                                    return (
-                                        <div onClick={() => ChoseExistingOrg(x._id)}>
-                                            <h1>Orga with id {x._id}</h1>
-                                        </div>
-                                    )
-                                })
-                            }
-                        </ul>
+                        <div className={'card d-flex flex-column p-4 dark-bg'}>
+                            <div className={'card-header'}>
+                                <h3>Select An Organization</h3>
+                            </div>
+                            <div className={"card-body d-flex flex-row flex-wrap justify-content-center"}>
+                                <div style={{cursor:"pointer",overflow:"hidden",whiteSpace: "nowrap",textOverflow:"ellipsis"}} className={`card d-flex flex-column p-4 m-1 shadow-lg w-25 h-100 ${(NewEventForm.organization_id === 'new') ? "text-dark": "dark-bg"}`} onClick={() => SelectOrg("new")}>
+                                    <h6 className={"text-center"}>Add New</h6>
+                                </div>
+                                {
+                                    org_data.map(x => {
+                                        return (
+                                            <div style={{cursor:"pointer",overflow:"hidden",whiteSpace: "nowrap",textOverflow:"ellipsis"}} className={`card d-flex flex-column p-4 ${(NewEventForm.organization_id === x._id) ? "text-dark": "dark-bg"} shadow-lg w-25 h-100 m-1`} onClick={() => SelectOrg(x._id)}>
+                                                <h6 className={"text-center"}>{x.name}</h6>
+                                            </div>
+                                        )
+                                    })
+                                }
+                            </div>
+                        </div>
                     :
                         <div></div>
                 }
             </div>
             <div>
                 {
-                    (NewEventForm.organization_id) ?
-                        <div>
-                            <h1>You've selected Org with ID {NewEventForm.organization_id}</h1>
-                            <button className={"btn btn-info"} onClick={ClearOrgId}>Make New Organization</button>
-                        </div>
-                        :
+                    (NewEventForm.organization_id === 'new') ?
                         <div className={'card d-flex flex-column p-4 dark-bg'}>
                             <div className={'card-header'}>
                                 <h3>Create New Organization</h3>
@@ -156,14 +160,19 @@ function ChoseOrg(props){
                                 <textarea rows={"5"} id={"description"} placeholder={"Description of the organization..."} value={organization.description.value} onChange={HandleChange} className={"form-control mb-1"}/>
                             </div>
 
-                        </div>
+                        </div> : <div></div>
                 }
             </div>
-            <div>
-                <Link to={`${url}/eventDetails`}>
-                    <button className={"btn btn-success"}>Continue</button>
-                </Link>
-            </div>
+            {
+                (NewEventForm.organization_id === null) ?
+                    <div></div>
+                    :
+                    <div>
+                        <Link to={`${url}/eventDetails`}>
+                            <button className={"btn btn-success"}>Continue</button>
+                        </Link>
+                    </div>
+            }
         </div>
     )
 }
@@ -404,11 +413,10 @@ const FormReducer = (state, action) => {
                 }
             }
         }
-        case 'organization_id': {
-            const { organization_id } = payload
+        case 'select_org': {
             return {
                 ...state,
-                organization_id
+                organization_id: payload
             }
         }
         case `clear_org_id`: {
