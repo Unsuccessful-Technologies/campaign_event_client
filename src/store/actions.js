@@ -44,6 +44,7 @@ export const SubmitLogin = (payload) => {
             const {user, events, organizations, token} = result
             dispatch({type: ActionTypes.SET_MY_EVENTS, payload: events})
             dispatch({type: ActionTypes.SET_MY_ORGS, payload: organizations})
+            window.sessionStorage.setItem('user', JSON.stringify({user,token}))
             return dispatch({type: ActionTypes.LOGIN_SUCCESS, payload: {user, token}})
         } catch (e) {
             console.log(e)

@@ -74,6 +74,7 @@ const Reducers = {
                 }
             }
             case LOGOUT: {
+                window.sessionStorage.clear()
                 return InitialState.User
             }
             case GET_PROFILE_START: {

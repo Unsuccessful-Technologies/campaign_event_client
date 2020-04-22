@@ -3,10 +3,11 @@ import {BrowserRouter as Router, Route, Redirect, useParams} from "react-router-
 import {Provider, useDispatch, useSelector} from "react-redux"
 import store from "../../store"
 import Loading from "../../pages/common/Loading";
-import {ValidateToken} from "../../store/actions";
+import {ActionTypes, GetProfile, ValidateToken} from "../../store/actions";
 
 
 function CustomProvider({children}) {
+
 
     return (
         <Provider store={store}>

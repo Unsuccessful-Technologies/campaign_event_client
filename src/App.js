@@ -1,6 +1,6 @@
 import React, {forwardRef, createRef, useEffect, useState} from 'react';
 import {BrowserRouter as Router, Switch, Route} from "react-router-dom";
-import {Provider} from "react-redux"
+import {Provider, useDispatch} from "react-redux"
 import store from "./store"
 
 import Header from "./pages/common/header";
@@ -12,12 +12,12 @@ import SearchResults from "./pages/SearchResults";
 import MemberProfile from "./pages/MemberProfile";
 import CustomProvider, {PrivateRoute} from "./components/hoc/CustomProvider";
 import Join from "./pages/Join";
+import {ActionTypes, GetProfile} from "./store/actions";
 
 function App() {
     const HeaderRef = forwardRef(Header)
     const HeaderElement = createRef()
     const [HeaderHeight, SetHeaderHeight] = useState(0)
-
     useEffect(() => {
         console.log(HeaderElement.current.offsetHeight)
         SetHeaderHeight(HeaderElement.current.offsetHeight)
