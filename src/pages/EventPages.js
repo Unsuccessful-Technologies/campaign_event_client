@@ -3,6 +3,7 @@ import {Switch, Route, useRouteMatch, Link} from 'react-router-dom'
 import {PrivateRoute} from "../components/hoc/CustomProvider";
 import Event from "./Event";
 import NewEvent from "./NewEvent";
+import EventDashboard from "./EventDashboard";
 
 function EventPages(props) {
     const { path, url } = useRouteMatch()
@@ -12,11 +13,11 @@ function EventPages(props) {
                 <Route path={`${path}/newevent`}>
                     <NewEvent/>
                 </Route>
-                <Route exact path={`${path}/public/:event_id`}>
+                <Route exact path={`${path}/:event_id`}>
                     <Event/>
                 </Route>
-                <PrivateRoute path={`${path}/:event_id`}>
-                    <Event/>
+                <PrivateRoute path={`${path}/:event_id/dashboard`}>
+                    <EventDashboard/>
                 </PrivateRoute>
             </Switch>
 

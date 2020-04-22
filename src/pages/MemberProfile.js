@@ -7,6 +7,7 @@ function MemberProfile(props) {
     const Events = useSelector(state => state.Events)
     const Organizations = useSelector(state => state.Organizations)
     const dispatch = useDispatch()
+    const history = useHistory()
     const { fName, lName, email, phone } = User.data
 
     console.log(Events, Organizations)
@@ -33,7 +34,7 @@ function MemberProfile(props) {
                 </div>
                 <div className={"card-body d-flex flex-row"}>
                     {
-                        Events.data.map(event => {
+                        Events.my_events.map(event => {
                             return (
                                 <div className={"card dark-bg m-2"}>
                                     <div className={"card-header"}>
@@ -44,8 +45,8 @@ function MemberProfile(props) {
                                         <p>{event.description}</p>
                                     </div>
                                     <div className={"card-footer"}>
-                                        <button className={"btn btn-warning p-1 m-1"}>Edit</button>
-                                        <button className={"btn btn-info p-1 m-1"}>View Page</button>
+                                        <button className={"btn btn-warning p-1 m-1"} onClick={() => history.push(`/events/${event._id}/dashboard`)}>Dashboard</button>
+                                        <button className={"btn btn-info p-1 m-1"} onClick={() => history.push(`/events/${event._id}`)}>View Page</button>
                                     </div>
                                 </div>
                             )

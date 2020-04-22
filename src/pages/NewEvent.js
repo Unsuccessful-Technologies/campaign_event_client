@@ -46,11 +46,11 @@ function LoggedIn(props){
     }
 
     useEffect(() => {
-        if(Events.data.success){
+        if(Events.new_event && Events.new_event.success){
             // TODO Fetch Orgs and Events for User
             history.push("/profile")
         }
-    }, [Events])
+    }, [Events.new_event])
 
     if(Events.loading){
         return (<Loading><h1>Creating New Event...</h1></Loading>)

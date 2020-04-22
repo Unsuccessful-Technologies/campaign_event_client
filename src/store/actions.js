@@ -11,9 +11,11 @@ export const ActionTypes = {
     TOKEN_VALID_START: "TOKEN_VALID_START",
     TOKEN_VALID_SUCCESS: "TOKEN_VALID_SUCCESS",
     TOKEN_VALID_FAIL: "TOKEN_VALID_FAIL",
-    NEW_EVENT_START: "NEW_EVENT_START",
+    EVENT_START: "EVENT_START",
+    EVENT_FAIL: "EVENT_FAIL",
+    SET_MY_EVENTS: "SET_MY_EVENTS",
     NEW_EVENT_SUCCESS: "NEW_EVENT_SUCCESS",
-    NEW_EVENT_FAIL: "NEW_EVENT_FAIL",
+    GET_EVENT_SUCCESS: "GET_EVENT_SUCCESS",
     ORGS_START: "ORGS_START",
     ORGS_SUCCESS: "ORGS_SUCCESS",
     ORGS_FAIL: "ORGS_FAIL"
@@ -36,7 +38,7 @@ export const SubmitLogin = (payload) => {
             }
             const result = await response.json()
             const {user, events, organizations, token} = result
-            dispatch({type: ActionTypes.NEW_EVENT_SUCCESS, payload: events})
+            dispatch({type: ActionTypes.SET_MY_EVENTS, payload: events})
             dispatch({type: ActionTypes.ORGS_SUCCESS, payload: organizations})
             return dispatch({type: ActionTypes.LOGIN_SUCCESS, payload: {user, token}})
         } catch (e) {
@@ -76,12 +78,14 @@ export const SubmitJoin = (payload) => {
 }
 
 export const SubmitEvent = (payload) => {
-    return async (dispatch) => {
-        dispatch({type: ActionTypes.NEW_EVENT_START})
+    return async (dispatch, getState) => {
+        dispatch({type: ActionTypes.EVENT_START})
+        const token = getState().User.token
         const options = {
             method: "POST",
             headers: {
-                "Content-Type":"application/json"
+                "Content-Type":"application/json",
+                "token": token
             },
             body: JSON.stringify(payload)
         }
@@ -95,13 +99,64 @@ export const SubmitEvent = (payload) => {
             if(success){
                 return dispatch({type: ActionTypes.NEW_EVENT_SUCCESS, payload: result})
             } else {
-                return dispatch({type: ActionTypes.NEW_EVENT_FAIL, payload: result.message})
+                return dispatch({type: ActionTypes.EVENT_FAIL, payload: result.message})
             }
         } catch (e) {
             console.log(e)
-            return dispatch({type: ActionTypes.NEW_EVENT_FAIL, payload: e.message})
+            return dispatch({type: ActionTypes.EVENT_FAIL, payload: e.message})
         }
     }
+}
+
+export const ViewEvent = (payload) => {
+    const {event_id} = payload
+
+    const EventIsLocal = (state, event_id) => {
+        if(state.my_events.length === 0) return false
+        for(let i = 0; i < state.my_events.length; i++){
+            const event = state.my_events[i]
+            if(event._id === event_id){
+                return true
+            }
+        }
+    }
+
+    return async (dispatch, getState) => {
+        dispatch({type: ActionTypes.EVENT_START})
+        const state = getState()
+        console.log(state)
+        if(EventIsLocal(state.Events,event_id)){
+            const event = state.Events.my_events.filter(x => x._id === event_id)[0]
+            dispatch({type:ActionTypes.GET_EVENT_SUCCESS, payload: event})
+        } else {
+            /** Get Event from server **/
+            const token = state.User.token
+            const options = {
+                method: "GET",
+                headers: {
+                    "Content-Type":"application/json"
+                }
+            }
+            if(token){
+                options.headers['token'] = token
+            }
+            try {
+                const response = await fetch(`${API.EventsURL}/${event_id}`, options)
+                const {status} = response
+                const result = await response.json()
+                if(status !== 200) {
+                    let error = new Error(result.message)
+                    error.status = status
+                    throw error
+                }
+                return dispatch({type: ActionTypes.GET_EVENT_SUCCESS, payload: result})
+            } catch (e) {
+                console.log(e)
+                return dispatch({type: ActionTypes.EVENT_FAIL, payload: {status: e.status, message: e.message}})
+            }
+        }
+    }
+
 }
 
 

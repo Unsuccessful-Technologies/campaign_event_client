@@ -21,7 +21,9 @@ const InitialState = {
     Events: {
         loading: false,
         error: null,
-        data: []
+        my_events: [],
+        new_event: null,
+        view_event: null
     },
     TokenValidation: {
         loading: true,
@@ -136,13 +138,21 @@ const Reducers = {
         }
     },
     Events: (state = InitialState.Events, action) => {
-        const {NEW_EVENT_START, NEW_EVENT_SUCCESS, NEW_EVENT_FAIL} = ActionTypes
+        const {EVENT_START, NEW_EVENT_SUCCESS, EVENT_FAIL, SET_MY_EVENTS, GET_EVENT_SUCCESS} = ActionTypes
         const {payload} = action
         switch (action.type) {
-            case NEW_EVENT_START: {
+            case EVENT_START: {
                 return {
                     ...state,
                     loading: true,
+                    error: null
+                }
+            }
+            case SET_MY_EVENTS: {
+                return {
+                    ...state,
+                    loading: false,
+                    my_events: payload,
                     error: null
                 }
             }
@@ -150,11 +160,19 @@ const Reducers = {
                 return {
                     ...state,
                     loading: false,
-                    data: payload,
+                    new_event: payload,
                     error: null
                 }
             }
-            case NEW_EVENT_FAIL: {
+            case GET_EVENT_SUCCESS: {
+                return {
+                    ...state,
+                    loading: false,
+                    view_event: payload,
+                    error: null
+                }
+            }
+            case EVENT_FAIL: {
                 return {
                     ...state,
                     loading: false,
