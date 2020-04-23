@@ -12,6 +12,8 @@ function Event(props) {
 
     useEffect(() => {
         dispatch(ViewEvent({event_id}))
+        document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
         return function () {
             dispatch({type: ActionTypes.LEAVE_VIEW_EVENT})
         }

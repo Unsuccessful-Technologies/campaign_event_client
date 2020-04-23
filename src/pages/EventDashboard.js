@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {useParams, useHistory} from "react-router-dom";
+import {useParams, useHistory, Link} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {ActionTypes, ViewEvent} from "../store/actions";
 import Loading from "./common/Loading";
@@ -17,6 +17,8 @@ function EventDashboard(props) {
 
     useEffect(() => {
         dispatch(ViewEvent({event_id}))
+        document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
         return function () {
             dispatch({type: ActionTypes.LEAVE_VIEW_EVENT})
         }
@@ -53,7 +55,10 @@ function EventDashboard(props) {
     const event = Events.view_event
     return (
         <div {...props} className="home-container container-fluid">
-            <h2>EventDashboard.js</h2>
+            <div className={"d-flex justify-content-between"}>
+                <h2>EventDashboard.js</h2>
+                <Link to={`/events/${event._id}`}><button className={"btn btn-info"}>View Event Page</button></Link>
+            </div>
             <div className={"card dark-bg"}>
                 <div className={"card-header"}>
                     <h3>{event.name}</h3>
