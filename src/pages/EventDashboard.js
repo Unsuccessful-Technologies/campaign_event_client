@@ -94,23 +94,24 @@ function EventDashboard(props) {
                                 </div>
                                 <div className={"d-flex flex-row flex-wrap"}>
                                 {
-                                    event.admin_ids.map(x => {
-                                            return (
-                                                <div className={"card bg-dark m-3 p-3 pt-4 position-relative"}>
-                                                    <p>{x}</p>
-                                                    {
-                                                        (EditMode === 'privacy') ?
-                                                            <div className={"position-absolute p-1 text-danger"} style={{top:0, right: "5%", cursor:"pointer"}}>&times;</div>
-                                                        : ""
-                                                    }
-                                                </div>
-                                            )
-                                        })
+                                    event.admins.map(x => {
+                                        return (
+                                            <div className={"card bg-dark m-3 p-3 pt-4 position-relative"}>
+                                                <p style={{textTransform:"capitalize"}}>{x.fName} {x.lName}</p>
+                                                <p>{x.email}</p>
+                                                {
+                                                    (EditMode === 'privacy') ?
+                                                        <div className={"position-absolute p-1 text-danger"} style={{top:0, right: "5%", cursor:"pointer"}}>&times;</div>
+                                                    : ""
+                                                }
+                                            </div>
+                                        )
+                                    })
                                 }
                                 </div>
                             </div>
                             {
-                                (event.member_ids.length > 0) ? (<div>Members: { event.member_ids.map(x => <p key={x}>{x}</p>) }</div>) : ""
+                                (event.members.length > 0) ? (<div>Members: { event.member_ids.map(x => <p key={x}>{x}</p>) }</div>) : ""
                             }
                         </div>
                     </div>
