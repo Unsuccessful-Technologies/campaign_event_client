@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useParams, useHistory} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
-import {ViewEvent} from "../store/actions";
+import {ActionTypes, ViewEvent} from "../store/actions";
 import Loading from "./common/Loading";
 
 function EventDashboard(props) {
@@ -17,6 +17,9 @@ function EventDashboard(props) {
 
     useEffect(() => {
         dispatch(ViewEvent({event_id}))
+        return function () {
+            dispatch({type: ActionTypes.LEAVE_VIEW_EVENT})
+        }
     }, [])
 
     useEffect(() => {

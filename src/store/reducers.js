@@ -145,9 +145,16 @@ const Reducers = {
         }
     },
     Events: (state = InitialState.Events, action) => {
-        const {EVENT_START, NEW_EVENT_SUCCESS, EVENT_FAIL, SET_MY_EVENTS, GET_EVENT_SUCCESS, NEW_EVENT_CLEAR} = ActionTypes
+        const {EVENT_START, NEW_EVENT_SUCCESS, EVENT_FAIL, SET_MY_EVENTS, GET_EVENT_SUCCESS, NEW_EVENT_CLEAR, LEAVE_VIEW_EVENT} = ActionTypes
         const {payload} = action
         switch (action.type) {
+            case LEAVE_VIEW_EVENT: {
+                return {
+                    ...state,
+                    error: null,
+                    view_event: null
+                }
+            }
             case EVENT_START: {
                 return {
                     ...state,
@@ -158,16 +165,14 @@ const Reducers = {
             case SET_MY_EVENTS: {
                 return {
                     ...state,
-                    loading: false,
-                    my_events: payload,
-                    error: null
+                    my_events: payload
                 }
             }
             case NEW_EVENT_CLEAR: {
                 return {
                     ...state,
                     loading: false,
-                    error: false,
+                    error: null,
                     new_event: InitialState.Events.new_event
                 }
             }

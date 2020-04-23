@@ -2,24 +2,28 @@ import React, {useEffect} from 'react';
 import {useParams} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import Loading from "./common/Loading";
-import {ViewEvent} from "../store/actions";
+import {ActionTypes, ViewEvent} from "../store/actions";
 
 function Event(props) {
     const {event_id} = useParams()
     const Events = useSelector(state => state.Events)
+    const token = useSelector(state => state.User.token)
     const dispatch = useDispatch()
 
     useEffect(() => {
         dispatch(ViewEvent({event_id}))
+        return function () {
+            dispatch({type: ActionTypes.LEAVE_VIEW_EVENT})
+        }
     }, [])
-
+    console.log(Events)
     if(Events.error){
         // TODO: Add a login to redirect back here if 403 and no token
         return (
             <div>
                 <h1 className={"text-danger"}>{Events.error.message}</h1>
                 {
-                    (Events.error.status === 403) ? <p>Please log in</p>: null
+                    (Events.error.status === 403) ? (token) ? "" : <p>Please log in</p>: ""
                 }
             </div>
         )

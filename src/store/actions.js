@@ -21,7 +21,8 @@ export const ActionTypes = {
     NEW_EVENT_CLEAR: "NEW_EVENT_CLEAR",
     GET_EVENT_SUCCESS: "GET_EVENT_SUCCESS",
     SET_MY_ORGS: "SET_MY_ORGS",
-    UPDATE_EVENT: "UPDATE_EVENT"
+    UPDATE_EVENT: "UPDATE_EVENT",
+    LEAVE_VIEW_EVENT: "LEAVE_VIEW_EVENT"
 }
 
 export const SubmitLogin = (payload) => {
