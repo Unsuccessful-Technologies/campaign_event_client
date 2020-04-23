@@ -21,6 +21,7 @@ export const ActionTypes = {
     NEW_EVENT_CLEAR: "NEW_EVENT_CLEAR",
     GET_EVENT_SUCCESS: "GET_EVENT_SUCCESS",
     SET_MY_ORGS: "SET_MY_ORGS",
+    UPDATE_EVENT: "UPDATE_EVENT"
 }
 
 export const SubmitLogin = (payload) => {
@@ -163,6 +164,41 @@ export const ViewEvent = (payload) => {
 
 }
 
+export const UpdateEvent = (payload) => {
+    return async (dispatch, getState) => {
+        dispatch({type: ActionTypes.EVENT_START})
+        const token = getState().User.token
+        const event_id = getState().Events.view_event._id
+        const options = {
+            method: "POST",
+            headers: {
+                "Content-Type":"application/json",
+                "token": token
+            },
+            body: JSON.stringify(payload)
+        }
+        try {
+            const response = await fetch(`${API.EventsURL}/${event_id}`, options)
+            const result = await response.json()
+            if(response.status !== 200) {
+                const error = new Error(result.message)
+                error.status = response.status
+                throw error
+            }
+            const {success} = result
+            if(success){
+                return dispatch(ViewEvent({event_id}))
+            } else {
+                const error = new Error(result.message)
+                throw error
+            }
+        } catch (e) {
+            console.log(e)
+            return dispatch({type: ActionTypes.EVENT_FAIL, payload: e})
+        }
+    }
+}
+
 export const GetProfile = () => {
     return async (dispatch, getState) => {
         dispatch({type: ActionTypes.GET_PROFILE_START})
@@ -192,7 +228,6 @@ export const GetProfile = () => {
         }
     }
 }
-
 
 export const ValidateToken = (payload) => {
     console.debug('ValidateToken',payload)

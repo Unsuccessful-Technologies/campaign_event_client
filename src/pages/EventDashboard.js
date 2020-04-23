@@ -10,20 +10,24 @@ function EventDashboard(props) {
     const UserID = useSelector(state => state.User.data._id)
     const dispatch = useDispatch()
     const history = useHistory()
+    const [EditMode, SetEditMode] = useState('')
+    const UpdateEvent = (payload) => {
+
+    }
 
     useEffect(() => {
         dispatch(ViewEvent({event_id}))
     }, [])
 
     useEffect(() => {
-        if(Events.view_event && Events.view_event.admin_ids){
+        if(Events.view_event && Events.view_event.admin_ids && UserID){
             const event = Events.view_event
             const {admin_ids} = event
             if(!admin_ids.includes(UserID)){
                 history.push("/profile")
             }
         }
-    }, [Events])
+    }, [Events,UserID])
 
     if(Events.error){
         // TODO: Add a login to redirect back here if 403 and no token
@@ -43,7 +47,6 @@ function EventDashboard(props) {
         )
     }
 
-
     const event = Events.view_event
     return (
         <div {...props} className="home-container container-fluid">
@@ -53,22 +56,76 @@ function EventDashboard(props) {
                     <h3>{event.name}</h3>
                 </div>
                 <div className={"card-body"}>
-                    <div className={"card dark-bg"}>
-                        <h4>Privacy</h4>
-                        <p>Open to public: {event.is_private ? "NO" : "YES"}</p>
-                        <div>Admins: { event.admin_ids.map(x => <p key={x}>{x}</p>) }</div>
-                        {
-                            (event.member_ids.length > 0) ? (<div>Members: { event.member_ids.map(x => <p key={x}>{x}</p>) }</div>) : ""
-                        }
+                    <div className={"card dark-bg shadow-lg m-3"}>
+                        <div className={"card-header"}>
+                            <h4 className={"d-inline-block"}>Privacy</h4>
+                            <div className={"float-right"}>
+                                {
+                                    EditMode === 'privacy' ?
+                                        <div>
+                                            <button className={"btn btn-sm btn-success m-2"} onClick={() => SetEditMode('submit')}>Save</button>
+                                            <button className={"btn btn-sm btn-danger m-2"} onClick={() => SetEditMode('')}>Cancel</button>
+                                        </div>
+                                        :
+                                        <div>
+                                            <button className={"btn btn-sm btn-primary"} onClick={() => SetEditMode('privacy')}>Edit</button>
+                                        </div>
+                                }
+                            </div>
+                        </div>
+                        <div className={"card-body"}>
+                            <div className="input-group mb-3">
+                                <div className="input-group-prepend">
+                                    <span className="input-group-text bg-dark text-light">Public</span>
+                                </div>
+                                {
+                                    EditMode === 'privacy' ?
+                                        <select type="text" className="form-control" id="is_private" value={event.is_private}>
+                                            <option value="false">Yes</option>
+                                            <option value="true">No</option>
+                                        </select>
+                                        :
+                                        <input className={"form-control"} readOnly={true} value={event.is_private ? "No":"Yes"}/>
+                                }
+                            </div>
+                            <div className="mb-3">
+                                <div>
+                                    <h5>Admins</h5>
+                                </div>
+                                <div className={"d-flex flex-row flex-wrap"}>
+                                {
+                                    event.admin_ids.map(x => {
+                                            return (
+                                                <div className={"card bg-dark m-3 p-3 pt-4 position-relative"}>
+                                                    <p>{x}</p>
+                                                    {
+                                                        (EditMode === 'privacy') ?
+                                                            <div className={"position-absolute p-1 text-danger"} style={{top:0, right: "5%", cursor:"pointer"}}>&times;</div>
+                                                        : ""
+                                                    }
+                                                </div>
+                                            )
+                                        })
+                                }
+                                </div>
+                            </div>
+                            {
+                                (event.member_ids.length > 0) ? (<div>Members: { event.member_ids.map(x => <p key={x}>{x}</p>) }</div>) : ""
+                            }
+                        </div>
                     </div>
-                    <div className={"card dark-bg"}>
-                        <h4>Event Information</h4>
-                        <p>Name: {event.name}</p>
-                        <p>Type: {event.type}</p>
-                        <p>Description: {event.description}</p>
-                        <p>Start: {event.start_date}</p>
-                        <p>End: {event.start_date}</p>
-                        <p>Goal: $ {event.goal_amount}.00</p>
+                    <div className={"card dark-bg shadow-lg m-3"}>
+                        <div className={"card-header"}>
+                            <h4>Event Information</h4>
+                        </div>
+                        <div className={"card-body"}>
+                            <p>Name: {event.name}</p>
+                            <p>Type: {event.type}</p>
+                            <p>Description: {event.description}</p>
+                            <p>Start: {event.start_date}</p>
+                            <p>End: {event.start_date}</p>
+                            <p>Goal: $ {event.goal_amount}.00</p>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -22,12 +22,16 @@ export default CustomProvider;
 
 export function PrivateRoute({children, ...props}) {
     const User = useSelector(state => state.User)
-
+    const sessionUser = JSON.parse(window.sessionStorage.getItem('user'))
+    let token
+    if(sessionUser){
+        token = sessionUser.token
+    }
     return (
         <Route
             {...props}
             render={({location}) => {
-                const isAuthorized = User.token
+                const isAuthorized = User.token || token
                 const visitorToken = getSearchParam('visitorToken', location)
                 if(isAuthorized){
                     return children
