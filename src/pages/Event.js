@@ -39,20 +39,51 @@ function Event(props) {
 
 
     const event = Events.view_event
+    const { name, type, description, start_date, end_date, goal_amount } = event
     return (
         <div {...props} className="home-container container-fluid">
-            <h2>{event.name}</h2>
-            <ul>
-                {
-                    Object.keys(event).map(key => {
-                        if(typeof event[key] === "string"){
-                            return (
-                                <li>{key}: {event[key]}</li>
-                            )
-                        }
-                    })
-                }
-            </ul>
+            <div className={"card dark-bg"}>
+                <div className={"card-header d-flex justify-content-between align-items-center"}>
+                    <h2>{name}</h2>
+                    <div className={"flex-grow-1 text-center"}>
+                        <button className={"btn btn-info w-25 m-2"}>Donate</button>
+                        <button className={"btn btn-success w-25 m-2"}>Invite</button>
+                    </div>
+                    <div className={"d-flex flex-column text-right"}>
+                        <div>Campaign Start: {start_date}</div>
+                        <div>Campaign End: {end_date}</div>
+                        <div>Goal: ${goal_amount}.00</div>
+                    </div>
+                </div>
+                <div className={"card-body d-flex"}>
+                    <div className={"card dark-bg m-3 w-50"}>
+                        <div className={"card-header"}>
+                            <h3>Description</h3>
+                        </div>
+                        <div className={"card-body"}>
+                            <p>{description}</p>
+                        </div>
+                    </div>
+                    <div className={"d-flex flex-column m-3 w-50"}>
+                        <div className={"card dark-bg"}>
+                            <div className={"card-header"}>
+                                <h3>Organization: NAME HERE</h3>
+                            </div>
+                            <div className={"card-body"}>
+                                <p>DESCRIPTION HERE</p>
+                            </div>
+                        </div>
+                        <div className={"card dark-bg"}>
+                            <div className={"card-header"}>
+                                <h3>Fundraising Status</h3>
+                            </div>
+                            <div className={"card-body"}>
+                                <p>FUNDS PROGRESS HERE</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }
