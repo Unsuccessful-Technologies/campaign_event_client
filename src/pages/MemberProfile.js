@@ -45,7 +45,7 @@ function MemberProfile(props) {
                     {
                         Events.my_events.map(event => {
                             return (
-                                <div className={"card dark-bg m-2"} key={event._id}>
+                                <div className={"card dark-bg m-2"} key={event._id} style={{flex:1}}>
                                     <div className={"card-header"}>
                                         <h3 style={{textTransform: "capitalize"}}>{event.name}</h3>
                                     </div>
@@ -71,13 +71,12 @@ function MemberProfile(props) {
                     {
                         Organizations.data.map(org => {
                             return (
-                                <div className={"card dark-bg m-2"} key={org._id}>
+                                <div className={"card dark-bg m-2"} key={org._id} style={{flex:1}}>
                                     <div className={"card-header"}>
                                         <h3 style={{textTransform: "capitalize"}}>{org.name}</h3>
                                     </div>
                                     <div className={"card-body"}>
-                                        <p>Description:</p>
-                                        <p>{org.description}</p>
+                                        <p className={"text-danger"}>Maybe show events this org owns or the admins</p>
                                     </div>
                                     <div className={"card-footer"}>
                                         <button className={"btn btn-warning p-1 m-1"}>Edit</button>

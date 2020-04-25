@@ -71,11 +71,11 @@ function Event(props) {
                     <div className={"d-flex flex-column text-right"}>
                         <div>{isCampaign ? "Campaign Start" : "Event Date"}: {start_date}</div>
                         { isCampaign ? <div>Campaign End: {end_date}</div>: ""}
-                        <div>Goal: ${goal_amount}.00</div>
+                        { isCampaign ? <div>Goal: ${goal_amount}.00</div> : ""}
                     </div>
                 </div>
                 <div className={"card-body d-flex"}>
-                    <div className={"card dark-bg m-3 w-50"}>
+                    <div className={"card dark-bg m-3 w-50 shadow"}>
                         <div className={"card-header"}>
                             <h3>Description</h3>
                         </div>
@@ -84,15 +84,15 @@ function Event(props) {
                         </div>
                     </div>
                     <div className={"d-flex flex-column m-3 w-50"}>
-                        <div className={"card dark-bg"}>
+                        <div className={"card dark-bg shadow"} style={{flex: 1, height: "350px", marginBottom: "10px", paddingBottom: "10px"}}>
                             <div className={"card-header"}>
-                                <h3>Organization: {organization.name}</h3>
+                                <h6><span className={"badge badge-info"}>Organization</span><h3 className={"text-center m-2"}>{organization.name}</h3></h6>
                             </div>
-                            <div className={"card-body"}>
+                            <div className={"card-body"} style={{overflowY:"auto"}}>
                                 <p>{organization.description}</p>
                             </div>
                         </div>
-                        <div className={"card dark-bg"}>
+                        <div className={"card dark-bg shadow"} style={{flex: 1}}>
                             <div className={"card-header"}>
                                 <h3>Fundraising Status</h3>
                             </div>

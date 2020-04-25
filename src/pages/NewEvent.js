@@ -1,4 +1,4 @@
-import React, {useEffect, useReducer} from 'react';
+import React, {useEffect, useReducer, useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import {Switch, Route, Link, useRouteMatch, useParams, useHistory} from "react-router-dom";
 import {ActionTypes, GetProfile, SubmitEvent} from "../store/actions";
@@ -61,9 +61,9 @@ function LoggedIn(props){
     return (
         <div>
             <div>
-                <ul className={'nav'}>
-                    <li className={"nav-item"}><Link to={`${url}`}>Organization</Link></li>
-                    <li className={"nav-item"}><Link to={`${url}/eventDetails`}>Event Details</Link></li>
+                <ul className={'nav justify-content-center'}>
+                    <li className={"nav-item m-4 p-2"}><Link to={`${url}`}>Organization Details</Link></li>
+                    <li className={"nav-item m-4 p-2"}><Link to={`${url}/eventDetails`}>Event Details</Link></li>
                 </ul>
             </div>
             <div>
@@ -106,7 +106,7 @@ function ChoseOrg(props){
     return (
         <div>
             <div>
-                <div className={'card d-flex flex-column p-4 dark-bg'}>
+                <div className={'card d-flex flex-column dark-bg m-3'}>
                     <div className={'card-header'}>
                         <h3>Select An Organization</h3>
                     </div>
@@ -116,16 +116,17 @@ function ChoseOrg(props){
                             className={`card d-flex flex-column p-4 m-1 shadow-lg w-25 h-100 ${(organization_id === 'new') ? "text-dark": "dark-bg"}`}
                             onClick={() => SelectOrg("new")}
                         >
-                            <h6 className={"text-center"}>Add New</h6>
+                            <h6
+                                className={"text-center"}>Add New</h6>
                         </div>
                         {
                             org_data.map(x => {
                                 return (
                                     <div
-                                        style={{cursor:"pointer",overflow:"hidden",whiteSpace: "nowrap",textOverflow:"ellipsis"}}
+                                        style={{cursor:"pointer"}}
                                         className={`card d-flex flex-column p-4 ${(organization_id === x._id) ? "text-dark": "dark-bg"} shadow-lg w-25 h-100 m-1`}
                                         onClick={() => SelectOrg(x._id)}>
-                                        <h6 className={"text-center"}>{x.name}</h6>
+                                        <h6 style={{cursor:"pointer",overflow:"hidden",whiteSpace: "nowrap",textOverflow:"ellipsis"}} className={"text-center"}>{x.name}</h6>
                                     </div>
                                 )
                             })
@@ -136,7 +137,7 @@ function ChoseOrg(props){
             <div>
                 {
                     (organization_id === 'new') ?
-                        <div className={'card d-flex flex-column p-4 dark-bg'}>
+                        <div className={'card d-flex flex-column p-4 dark-bg m-3'}>
                             <div className={'card-header'}>
                                 <h3>Create New Organization</h3>
                             </div>
@@ -166,7 +167,7 @@ function ChoseOrg(props){
                 (NewEventForm.organization_id === null) ?
                     <div></div>
                     :
-                    <div>
+                    <div className={"m-3"}>
                         <Link to={`${url}/eventDetails`}>
                             <button className={"btn btn-success"}>Continue</button>
                         </Link>
@@ -198,7 +199,7 @@ function EventDetails(props){
             <div className={"p-3"}>
                 <div className={"d-flex flex-row p-3 m-1"}>
                     <div className={"card dark-bg w-50 p-4 m-1"}>
-                        <h3>Event Details</h3>
+                        <h3>{(event.type.value === 'campaign')? "Campaign Details" : "Event Details"}</h3>
                         <div className={"input-group mb-2"}>
                             <div className={"input-group-prepend"}>
                                 <span className={'input-group-text'}>Event Type</span>
@@ -209,21 +210,9 @@ function EventDetails(props){
                                 <option value={"campaign"}>Campaign</option>
                             </select>
                         </div>
-                        <input id={"name"} placeholder={"Event's Name"} value={event.name.value} onChange={HandleChange} className={"form-control mb-2"}/>
-                        <input id={"description"} placeholder={"Description"} value={event.description.value} onChange={HandleChange} className={"form-control mb-2"}/>
-                        <div className={"input-group mb-2"}>
-                            <div className={"input-group-prepend"}>
-                                <span className={'input-group-text'}>Start Date</span>
-                            </div>
-                            <input id={"start_date"} type={"date"} placeholder={"Start Date"} value={event.start_date.value} onChange={HandleChange} className={"form-control"}/>
+                        <input id={"name"} placeholder={(event.type.value === 'campaign')? "Campaign Name" : "Event's Name"} value={event.name.value} onChange={HandleChange} className={"form-control mb-2"}/>
+                        <textarea rows={6} id={"description"} placeholder={"Description"} value={event.description.value} onChange={HandleChange} className={"form-control mb-2"}/>
 
-                        </div>
-                        <div className={"input-group mb-2"}>
-                            <div className={"input-group-prepend"}>
-                                <span className={'input-group-text'}>End Date</span>
-                            </div>
-                            <input id={"end_date"} type={"date"} placeholder={"End Date"} value={event.end_date.value} onChange={HandleChange} className={"form-control"}/>
-                        </div>
                         <div className={"input-group mb-2"}>
                             <div className={"input-group-prepend"}>
                                 <span className={'input-group-text'}>Private</span>
@@ -234,20 +223,51 @@ function EventDetails(props){
                                 <option value={false}>No</option>
                             </select>
                         </div>
-                        <input id={"goal_amount"} placeholder={"$ Goal to raise"} value={event.goal_amount.value} onChange={HandleChange} className={"form-control mb-2"}/>
+                        {
+                            (event.is_private.value === "false") ? <Keywords values={event.keywords.value} dispatch={NewEventDispatch}/> : ""
+                        }
                     </div>
                     <div className={"card dark-bg w-50 p-4 m-1"}>
                         {
                             (event.type.value === 'ticketed') ?
                                 <div>
                                     <h3>Ticketed Inputs</h3>
-                                    <h1 className={'text-danger'}>TBD</h1>
+                                    <div className={"input-group mb-2"}>
+                                        <div className={"input-group-prepend"}>
+                                            <span className={'input-group-text'}>Event Date</span>
+                                        </div>
+                                        <input id={"start_date"} type={"date"} value={event.start_date.value} onChange={HandleChange} className={"form-control"}/>
+                                        <h1 className={"text-danger"}>ADD REST OF TICKETED INPUTS</h1>
+                                    </div>
                                 </div>
                                 :
                                 (event.type.value === 'campaign') ?
                                     <div>
                                         <h3>Campaign Inputs</h3>
-                                        <h1 className={'text-danger'}>TBD</h1>
+                                        <div className={"input-group mb-2"}>
+                                            <div className={"input-group-prepend"}>
+                                                <span className={'input-group-text'}>Start Date</span>
+                                            </div>
+                                            <input id={"start_date"} type={"date"} placeholder={"Start Date"} value={event.start_date.value} onChange={HandleChange} className={"form-control"}/>
+
+                                        </div>
+                                        <div className={"input-group mb-2"}>
+                                            <div className={"input-group-prepend"}>
+                                                <span className={'input-group-text'}>End Date</span>
+                                            </div>
+                                            <input id={"end_date"} type={"date"} placeholder={"End Date"} value={event.end_date.value} onChange={HandleChange} className={"form-control"}/>
+                                        </div>
+                                        <div className={"input-group mb-2"}>
+                                            <div className={"input-group-prepend"}>
+                                                <span className={'input-group-text'}>$</span>
+                                            </div>
+                                            <input id={"goal_amount"} type={"number"} placeholder={"Amount to raise"} value={event.goal_amount.value} onChange={HandleChange} className={"form-control"}/>
+                                            <div className={"input-group-append"}>
+                                                <span className={'input-group-text'}>.00</span>
+                                            </div>
+                                        </div>
+
+                                        <h1 className={"text-danger"}>ADD REST OF CAMPAIGN INPUTS</h1>
                                     </div>
                                     :
                                     <div><h2>Select an event type</h2></div>
@@ -266,8 +286,58 @@ function EventDetails(props){
                     </div>
                 </div>
             </div>
-            <div>
+            <div className={"m-3"}>
                 <button className={"btn btn-success"} onClick={submit}>Submit</button>
+            </div>
+        </div>
+    )
+}
+
+function Keywords(props){
+    const {values, dispatch} = props
+
+    const submitNewWord = (e) => {
+        e.preventDefault()
+        const value = e.target.keyword_new.value
+        e.target.keyword_new.value = ""
+        const action = {
+            type: "array_add",
+            payload: {
+                key: "keywords",
+                value: value
+            },
+        }
+        dispatch(action)
+    }
+
+    const removeWord = value => {
+        const action = {
+            type: "array_remove",
+            payload: {
+                key: "keywords",
+                value: value
+            },
+        }
+        dispatch(action)
+    }
+
+    return (
+        <div>
+            <h4>Keywords <span><div className={"badge badge-secondary"}>optional</div></span></h4>
+            <form onSubmit={submitNewWord} className={"d-flex m-1"}>
+                <input id={"keyword_new"} placeholder={"Search Tag"} className={"form-control"}/>
+                <button type={"submit"} className={"btn btn-sm btn-success"}>Add</button>
+            </form>
+            <div className={"w-100 d-flex flex-wrap"}>
+            {
+                values.map((value) => {
+                    return (
+                        <div className={"m-1"}>
+                            <h5><span className={"badge badge-info"}>{value} <span className={"badge badge-danger"} onClick={() => removeWord(value)}>X</span></span></h5>
+                        </div>
+                    )
+                })
+            }
             </div>
         </div>
     )
@@ -345,6 +415,9 @@ const initialFormState = {
             isValid: false,
             isTouched: false,
             validation: BasicValidation
+        },
+        keywords: {
+            value: [],
         }
     },
     "organization":{
@@ -435,6 +508,33 @@ const FormReducer = (state, action) => {
                         isValid: validation(value),
                         validation,
                         isTouched: true
+                    }
+                }
+            }
+        }
+        case 'array_add': {
+            const { key, value } = payload
+            const newArr = [...state.event[key].value]
+            newArr.push(value)
+            return {
+                ...state,
+                event: {
+                    ...state.event,
+                    [key]: {
+                        value: newArr
+                    }
+                }
+            }
+        }
+        case 'array_remove': {
+            const { key, value } = payload
+            const newArr = state.event[key].value.filter(x => x !== value)
+            return {
+                ...state,
+                event: {
+                    ...state.event,
+                    [key]: {
+                        value: newArr
                     }
                 }
             }

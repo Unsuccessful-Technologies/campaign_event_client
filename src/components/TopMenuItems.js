@@ -1,5 +1,5 @@
 import React from 'react';
-import {Link, useLocation} from "react-router-dom";
+import {Link, useLocation, useHistory} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {ActionTypes} from "../store/actions";
 
@@ -7,9 +7,11 @@ function TopMenuItems(props) {
     const dispatch = useDispatch()
     const token = useSelector(state => state.User.token)
     const location = useLocation()
+    const history = useHistory()
 
     const logout = () => {
         dispatch({type:ActionTypes.LOGOUT})
+        history.push("/login")
     }
 
     return (
