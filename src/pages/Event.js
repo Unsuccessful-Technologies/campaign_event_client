@@ -1,14 +1,28 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState, useCallback} from 'react';
 import {useParams} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import Loading from "./common/Loading";
 import {ActionTypes, ViewEvent} from "../store/actions";
+import Invite from "./Invite";
+import Checkout from "./Checkout";
 
 function Event(props) {
     const {event_id} = useParams()
     const Events = useSelector(state => state.Events)
     const token = useSelector(state => state.User.token)
     const dispatch = useDispatch()
+
+    const [ShowInvite, setShowInvite] = useState(false)
+    const [ShowCheckout, setShowCheckout] = useState(false)
+
+
+    const toggleShowInvite = useCallback(() => {
+        setShowInvite(!ShowInvite)
+    }, [ShowInvite, setShowInvite])
+
+    const toggleShowCheckout = useCallback(() => {
+        setShowCheckout(!ShowCheckout)
+    }, [ShowCheckout, setShowCheckout])
 
     useEffect(() => {
         dispatch(ViewEvent({event_id}))
@@ -18,7 +32,8 @@ function Event(props) {
             dispatch({type: ActionTypes.LEAVE_VIEW_EVENT})
         }
     }, [])
-    console.log(Events)
+
+
     if(Events.error){
         // TODO: Add a login to redirect back here if 403 and no token
         return (
@@ -39,19 +54,23 @@ function Event(props) {
 
 
     const event = Events.view_event
-    const { name, type, description, start_date, end_date, goal_amount } = event
+    console.log(event)
+    const { name, type, description, start_date, end_date, goal_amount, organization } = event
+    const isCampaign = type === 'campaign'
     return (
         <div {...props} className="home-container container-fluid">
             <div className={"card dark-bg"}>
                 <div className={"card-header d-flex justify-content-between align-items-center"}>
                     <h2>{name}</h2>
                     <div className={"flex-grow-1 text-center"}>
-                        <button className={"btn btn-info w-25 m-2"}>Donate</button>
-                        <button className={"btn btn-success w-25 m-2"}>Invite</button>
+                        <button className={"btn btn-info w-25 m-2"} onClick={toggleShowCheckout}>{ isCampaign ? "Donate" : "Buy Tickets"}</button>
+                        <Checkout show={ShowCheckout} close={toggleShowCheckout}></Checkout>
+                        <button className={"btn btn-success w-25 m-2"} onClick={toggleShowInvite}>Invite</button>
+                        <Invite show={ShowInvite} close={toggleShowInvite}/>
                     </div>
                     <div className={"d-flex flex-column text-right"}>
-                        <div>Campaign Start: {start_date}</div>
-                        <div>Campaign End: {end_date}</div>
+                        <div>{isCampaign ? "Campaign Start" : "Event Date"}: {start_date}</div>
+                        { isCampaign ? <div>Campaign End: {end_date}</div>: ""}
                         <div>Goal: ${goal_amount}.00</div>
                     </div>
                 </div>
@@ -67,10 +86,10 @@ function Event(props) {
                     <div className={"d-flex flex-column m-3 w-50"}>
                         <div className={"card dark-bg"}>
                             <div className={"card-header"}>
-                                <h3>Organization: NAME HERE</h3>
+                                <h3>Organization: {organization.name}</h3>
                             </div>
                             <div className={"card-body"}>
-                                <p>DESCRIPTION HERE</p>
+                                <p>{organization.description}</p>
                             </div>
                         </div>
                         <div className={"card dark-bg"}>
