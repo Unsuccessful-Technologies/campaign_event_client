@@ -61,12 +61,12 @@ function Login(props) {
                     Login
                 </button>
             </div>
-            <h4 className={"text-center m-3 font-italic"}>OR</h4>
-            <div className={"w-50 m-auto p-4"}>
-                <Link to={"/join"}>
-                    <button className={'btn btn-warning w-100'}>Join</button>
-                </Link>
-            </div>
+            {/*<h4 className={"text-center m-3 font-italic"}>OR</h4>*/}
+            {/*<div className={"w-50 m-auto p-4"}>*/}
+            {/*    <Link to={"/join"}>*/}
+            {/*        <button className={'btn btn-warning w-100'}>Join</button>*/}
+            {/*    </Link>*/}
+            {/*</div>*/}
         </div>
     );
 }

@@ -1,7 +1,7 @@
 import React, {useEffect, useReducer} from 'react';
 import {Link, useHistory, useLocation} from "react-router-dom";
 import {useSelector, useDispatch} from "react-redux";
-import {SubmitJoin} from "../store/actions";
+import {ActionTypes, SubmitJoin} from "../store/actions";
 import Loading from "./common/Loading";
 
 function Join(props) {
@@ -39,6 +39,9 @@ function Join(props) {
         if(Join.data.success){
             history.push({ pathname: "/login", state: location.state })
         }
+        return function () {
+            dispatch({type:ActionTypes.JOIN_CLEAR})
+        }
     }, [Join, location, history])
 
     useEffect(() => {
@@ -67,12 +70,12 @@ function Join(props) {
                     (Join.error) ? <p className={"text-danger"}>{Join.error}</p> : null
                 }
             </div>
-            <h4 className={"text-center m-3 font-italic"}>OR</h4>
-            <div className={"w-50 m-auto p-4"}>
-                <Link to={"/login"}>
-                    <button className={'btn btn-warning w-100'}>Login</button>
-                </Link>
-            </div>
+            {/*<h4 className={"text-center m-3 font-italic"}>OR</h4>*/}
+            {/*<div className={"w-50 m-auto p-4"}>*/}
+            {/*    <Link to={"/login"}>*/}
+            {/*        <button className={'btn btn-warning w-100'}>Login</button>*/}
+            {/*    </Link>*/}
+            {/*</div>*/}
         </div>
     );
 }

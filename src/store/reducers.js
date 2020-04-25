@@ -116,9 +116,12 @@ const Reducers = {
         }
     },
     Join: (state = InitialState.Join, action) => {
-        const {JOIN_START, JOIN_SUCCESS, JOIN_FAIL} = ActionTypes
+        const {JOIN_START, JOIN_SUCCESS, JOIN_FAIL, JOIN_CLEAR} = ActionTypes
         const {payload} = action
         switch (action.type) {
+            case JOIN_CLEAR: {
+                return InitialState.Join
+            }
             case JOIN_START: {
                 return {
                     ...state,
