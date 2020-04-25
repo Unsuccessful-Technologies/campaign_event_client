@@ -1,5 +1,5 @@
 import React, {useEffect, useState, useCallback} from 'react';
-import {useParams} from "react-router-dom";
+import {useParams, useHistory} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import Loading from "./common/Loading";
 import {ActionTypes, ViewEvent} from "../store/actions";
@@ -10,19 +10,23 @@ function Event(props) {
     const {event_id} = useParams()
     const Events = useSelector(state => state.Events)
     const token = useSelector(state => state.User.token)
+    const history = useHistory()
     const dispatch = useDispatch()
 
     const [ShowInvite, setShowInvite] = useState(false)
     const [ShowCheckout, setShowCheckout] = useState(false)
 
-
     const toggleShowInvite = useCallback(() => {
         setShowInvite(!ShowInvite)
     }, [ShowInvite, setShowInvite])
-
     const toggleShowCheckout = useCallback(() => {
         setShowCheckout(!ShowCheckout)
     }, [ShowCheckout, setShowCheckout])
+    const navToHomeAfterWait = () => {
+        setTimeout(() => {
+            history.push('/')
+        }, 5000)
+    }
 
     useEffect(() => {
         dispatch(ViewEvent({event_id}))
@@ -36,12 +40,13 @@ function Event(props) {
 
     if(Events.error){
         // TODO: Add a login to redirect back here if 403 and no token
+        navToHomeAfterWait()
         return (
             <div>
-                <h1 className={"text-danger"}>{Events.error.message}</h1>
-                {
-                    (Events.error.status === 403) ? (token) ? "" : <p>Please log in</p>: ""
-                }
+                <h1 className={"text-danger text-center"}>{Events.error.message}</h1>
+                <Loading>
+                    <h3>Navigating to home page...</h3>
+                </Loading>
             </div>
         )
     }
