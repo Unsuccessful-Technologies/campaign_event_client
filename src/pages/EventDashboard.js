@@ -80,12 +80,19 @@ function EventDashboard(props) {
 
     useEffect(() => {
         if(view_event && UserID){
-            const {admins} = view_event
+            const {admins, members} = view_event
             const admin_ids = admins.map(x => x._id)
-            if(!admin_ids.includes(UserID)){
-                history.push("/profile")
+            const member_ids = members.map(x => x._id)
+            const isAdmin = admin_ids.includes(UserID)
+            const isMember = member_ids.includes(UserID)
+
+            if(isAdmin) {
+                setLocalEvent({...view_event, isAdmin})
+
+            } else if(isMember) {
+                setLocalEvent({...view_event})
             } else {
-                setLocalEvent(view_event)
+                history.push("/profile")
             }
         }
     }, [view_event,UserID])
@@ -184,96 +191,52 @@ function EventDashboard(props) {
 
                     <div className={"card dark-bg shadow-lg m-3"}>
                         <div className={"card-header"}>
-                            <h4 className={"d-inline-block"}>Privacy</h4>
-                            <div className={"float-right"}>
-                                {
-                                    EditMode === 'privacy' ?
-                                        <div>
-                                            <button className={"btn btn-sm btn-success m-2"} onClick={() => SetEditMode('submit')}>Save</button>
-                                            <button className={"btn btn-sm btn-danger m-2"} onClick={() => SetEditMode('')}>Cancel</button>
-                                        </div>
-                                        :
-                                        <div>
-                                            <button className={"btn btn-sm btn-primary"} onClick={() => SetEditMode('privacy')}>Edit</button>
-                                        </div>
-                                }
-                            </div>
+                            <h4 className={"d-inline-block"}>Users</h4>
                         </div>
                         <div className={"card-body"}>
                             <div className={"d-flex"}>
 
-
-                                <div className="input-group m-3">
-                                    <div className="input-group-prepend">
-                                        <span className="input-group-text bg-dark text-light">Public</span>
-                                    </div>
-                                    {
-                                        EditMode === 'privacy' ?
-                                            <select type="text" className="form-control" id="is_private" value={event.is_private}>
-                                                <option value="false">Open</option>
-                                                <option value="true">Closed</option>
-                                            </select>
-                                            :
-                                            <input className={"form-control"} readOnly={true} value={event.is_private ? "Closed":"Open"}/>
-                                    }
-                                </div>
-
-
-                                <div className="input-group m-3">
-                                    <div className="input-group-prepend">
-                                        <span className="input-group-text bg-dark text-light">Searchable</span>
-                                    </div>
-                                    {
-                                        EditMode === 'privacy' ?
-                                            <select type="text" className="form-control" id="is_searchable" value={event.is_searchable}>
-                                                <option value="true">Yes</option>
-                                                <option value="false">No</option>
-                                            </select>
-                                            :
-                                            <input className={"form-control"} readOnly={true} value={event.is_searchable ? "Yes":"No"}/>
-                                    }
-                                </div>
-
-                            </div>
-                            <div className={"d-flex"}>
-                                <div className="m-3" style={{flex:1, maxHeight: "400px"}}>
-                                    <div className={"d-flex justify-content-between"}>
-                                        <h5>Admins</h5>
-                                    </div>
-                                    <table className={"table table-dark w-100"}>
-                                        <thead>
-                                        <tr>
-                                            <th scope="col">Email</th>
-                                            <th scope="col" className={"text-center"}><button className={"btn btn-sm btn-success"} onClick={() => setAddUser({type:"admin"})}>Add</button></th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        {
-                                            event.admins.map((x,i) => {
-                                                return (
-                                                    <tr key={`admin_${i}`}>
-                                                        <td>{x.email}</td>
-                                                        {
-                                                            i === 0 ? <td></td>:<td
-                                                                className={"text-danger text-center"}
-                                                                style={{cursor:"pointer"}}
-                                                                onClick={() => RemoveUser({type:"admin",index: i} )}>&times;</td>
-                                                        }
+                                {
+                                    event.isAdmin ? <div className="m-3" style={{flex:1, maxHeight: "400px"}}>
+                                        <div className={"d-flex justify-content-between"}>
+                                            <h5>Admins</h5>
+                                        </div>
+                                        <table className={"table table-dark w-100"}>
+                                            <thead>
+                                            <tr>
+                                                <th scope="col">Email</th>
+                                                <th scope="col" className={"text-center"}><button className={"btn btn-sm btn-success"} onClick={() => setAddUser({type:"admin"})}>Add</button></th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {
+                                                event.admins.map((x,i) => {
+                                                    return (
+                                                        <tr key={`admin_${i}`}>
+                                                            <td>{x.email}</td>
+                                                            {
+                                                                i === 0 ? <td></td>:<td
+                                                                    className={"text-danger text-center"}
+                                                                    style={{cursor:"pointer"}}
+                                                                    onClick={() => RemoveUser({type:"admin",index: i} )}>&times;</td>
+                                                            }
+                                                        </tr>
+                                                    )
+                                                })
+                                            }
+                                            {
+                                                addUser.type === 'admin' ?
+                                                    <tr>
+                                                        <td><input ref={EmailInputs.admin} className={'form-control'} placeholder={"Email"}/></td>
+                                                        <td><button onClick={AddUser} className={"btn btn-sm btn-primary"}>Submit</button></td>
                                                     </tr>
-                                                )
-                                            })
-                                        }
-                                        {
-                                            addUser.type === 'admin' ?
-                                                <tr>
-                                                    <td><input ref={EmailInputs.admin} className={'form-control'} placeholder={"Email"}/></td>
-                                                    <td><button onClick={AddUser} className={"btn btn-sm btn-primary"}>Submit</button></td>
-                                                </tr>
-                                                : null
-                                        }
-                                        </tbody>
-                                    </table>
-                                </div>
+                                                    : null
+                                            }
+                                            </tbody>
+                                        </table>
+                                    </div> : null
+                                }
+
                                 <div className="m-3" style={{flex:1, maxHeight: "400px"}}>
                                     <div className={"d-flex justify-content-between"}>
                                         <h5>Members</h5>
@@ -291,10 +254,12 @@ function EventDashboard(props) {
                                                 return (
                                                     <tr key={`member_${i}`}>
                                                         <td>{x.email}</td>
-                                                        <td
-                                                            className={"text-danger text-center"}
-                                                            style={{cursor:"pointer"}}
-                                                            onClick={() => RemoveUser({type:"admin",index: i} )}>&times;</td>
+                                                        {
+                                                            event.isAdmin ? <td
+                                                                className={"text-danger text-center"}
+                                                                style={{cursor:"pointer"}}
+                                                                onClick={() => RemoveUser({type:"member",index: i} )}>&times;</td> : null
+                                                        }
                                                     </tr>
                                                 )
                                             })
@@ -302,7 +267,7 @@ function EventDashboard(props) {
                                         {
                                             addUser.type === 'member' ?
                                                 <tr>
-                                                    <td><input ref={EmailInputs.admin} className={'form-control'} placeholder={"Email"}/></td>
+                                                    <td><input ref={EmailInputs.member} className={'form-control'} placeholder={"Email"}/></td>
                                                     <td><button onClick={AddUser} className={"btn btn-sm btn-primary"}>Submit</button></td>
                                                 </tr>
                                                 : null
@@ -310,6 +275,8 @@ function EventDashboard(props) {
                                         </tbody>
                                     </table>
                                 </div>
+
+
                             </div>
                         </div>
                     </div>
