@@ -35,7 +35,7 @@ function Event(props) {
         return function () {
             dispatch({type: ActionTypes.LEAVE_VIEW_EVENT})
         }
-    }, [])
+    }, [dispatch, event_id])
 
 
     if(Events.error){

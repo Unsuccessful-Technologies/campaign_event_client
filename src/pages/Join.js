@@ -42,7 +42,7 @@ function Join(props) {
         return function () {
             dispatch({type:ActionTypes.JOIN_CLEAR})
         }
-    }, [Join, location, history])
+    }, [Join, location, history, dispatch])
 
     useEffect(() => {
         if(Join.error){

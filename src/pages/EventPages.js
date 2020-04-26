@@ -6,7 +6,7 @@ import NewEvent from "./NewEvent";
 import EventDashboard from "./EventDashboard";
 
 function EventPages(props) {
-    const { path, url } = useRouteMatch()
+    const { path } = useRouteMatch()
     return (
         <div {...props} className="home-container container-fluid">
             <Switch>

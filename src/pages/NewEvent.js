@@ -47,12 +47,12 @@ function LoggedIn(props){
             dispatch(GetProfile())
             history.push("/profile")
         }
-    }, [Events.new_event])
+    }, [Events.new_event, dispatch, history])
 
     useEffect(() => {
         console.log('Clearing NEW EVENT')
         dispatch({type: ActionTypes.NEW_EVENT_CLEAR})
-    }, [])
+    }, [dispatch])
 
     if(Events.loading){
         return (<Loading><h1>Creating New Event...</h1></Loading>)

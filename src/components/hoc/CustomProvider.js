@@ -3,7 +3,7 @@ import {BrowserRouter as Router, Route, Redirect, useParams} from "react-router-
 import {Provider, useDispatch, useSelector} from "react-redux"
 import store from "../../store"
 import Loading from "../../pages/common/Loading";
-import {ActionTypes, GetProfile, ValidateToken} from "../../store/actions";
+import {ValidateToken} from "../../store/actions";
 
 
 function CustomProvider({children}) {
@@ -57,7 +57,7 @@ const LoadToken = (props) => {
 
     useEffect(() => {
         dispatch(ValidateToken({token,event_id}))
-    },[])
+    },[dispatch, event_id, token])
 
     if(TokenValidation.data.allowed === false){
         return (<Redirect to={{pathname: "/login"}} />)
@@ -75,7 +75,7 @@ function getSearchParam(variable, location) {
     const vars = query.split('&');
     for (let i = 0; i < vars.length; i++) {
         let pair = vars[i].split('=');
-        if (decodeURIComponent(pair[0]) == variable) {
+        if (decodeURIComponent(pair[0]) === variable) {
             return decodeURIComponent(pair[1]);
         }
     }
