@@ -1,6 +1,6 @@
-import React, {useEffect, useReducer, useState} from 'react';
+import React, {useEffect, useReducer,} from 'react';
 import {useDispatch, useSelector} from "react-redux";
-import {Switch, Route, Link, useRouteMatch, useParams, useHistory, Redirect} from "react-router-dom";
+import {Switch, Route, Link, useRouteMatch, useHistory, Redirect} from "react-router-dom";
 import {ActionTypes, GetProfile, SubmitEvent} from "../store/actions";
 import Loading from "./common/Loading";
 
@@ -32,10 +32,10 @@ function LoggedIn(props){
             organization:{},
             organization_id: NewEventForm.organization_id
         }
-        Object.keys(NewEventForm.event).map(key => {
+        Object.keys(NewEventForm.event).forEach(key => {
             result.event[key] = NewEventForm.event[key].value
         })
-        Object.keys(NewEventForm.organization).map(key => {
+        Object.keys(NewEventForm.organization).forEach(key => {
             result.organization[key] = NewEventForm.organization[key].value
         })
         console.log(result)
@@ -347,10 +347,17 @@ export function Keywords(props){
             }
             <div className={"w-100 d-flex flex-wrap"}>
             {
-                values.map((value) => {
+                values.map((value, i) => {
                     return (
-                        <div className={"m-1"}>
-                            <h5><span className={"badge badge-info"}>{value} <span className={"badge badge-danger"} onClick={() => removeWord(value)}>X</span></span></h5>
+                        <div key={`keyword_${i}`} className={"m-1"}>
+                            <h5>
+                                <span className={"badge badge-info"}>
+                                    {value}
+                                    {
+                                        hideEdit ? null:<span className={"badge badge-danger"} onClick={() => removeWord(value)}>X</span>
+                                    }
+                                </span>
+                            </h5>
                         </div>
                     )
                 })

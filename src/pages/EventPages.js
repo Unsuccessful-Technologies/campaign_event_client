@@ -1,5 +1,5 @@
 import React from 'react';
-import {Switch, Route, useRouteMatch, Link} from 'react-router-dom'
+import {Switch, Route, useRouteMatch} from 'react-router-dom'
 import {PrivateRoute} from "../components/hoc/CustomProvider";
 import Event from "./Event";
 import NewEvent from "./NewEvent";

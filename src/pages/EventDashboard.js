@@ -8,7 +8,7 @@ import {Keywords} from "./NewEvent";
 function EventDashboard(props) {
     const {event_id} = useParams()
     const Events = useSelector(state => state.Events)
-    const {view_event} = Events
+    const {view_event, update_event} = Events
     const UserID = useSelector(state => state.User.data._id)
     const dispatch = useDispatch()
     const history = useHistory()
@@ -19,7 +19,6 @@ function EventDashboard(props) {
         admin: useRef(),
         member: useRef()
     }
-    const KeywordInput = useRef()
 
     const RemoveUser = (action) => {
         const {type, index} = action
@@ -98,8 +97,8 @@ function EventDashboard(props) {
                 break;
             }
             case "submit": {
-                const update = GetValuesThatChanged()
-                console.log(update)
+                console.log(payload)
+                dispatch(UpdateEvent(payload))
                 break;
             }
             default: return
@@ -119,8 +118,13 @@ function EventDashboard(props) {
     }
 
     const HandleSubmit = () => {
-        SetEditMode('submit')
-        UpdateEvent({type:"submit"})
+        const payload = GetValuesThatChanged()
+        if(Object.keys(payload).length > 0){
+            SetEditMode('submit')
+            UpdateEvent({type:"submit", payload})
+        } else {
+            SetEditMode("")
+        }
     }
 
     useEffect(() => {
@@ -130,7 +134,7 @@ function EventDashboard(props) {
         return function () {
             dispatch({type: ActionTypes.LEAVE_VIEW_EVENT})
         }
-    }, [])
+    }, [dispatch,event_id])
 
     useEffect(() => {
         if(view_event && UserID){
@@ -149,7 +153,7 @@ function EventDashboard(props) {
                 history.push("/profile")
             }
         }
-    }, [view_event,UserID])
+    }, [view_event,UserID,history])
 
     if(Events.error){
         // TODO: Add a login to redirect back here if 403 and no token
@@ -176,7 +180,7 @@ function EventDashboard(props) {
             </div>
             <div className={"card dark-bg"}>
                 <div className={"card-header"}>
-                    <h3><h6><span className={"badge badge-info"}>{event.type === "campaign" ? "Fundraiser" : "Event"}</span></h6> {event.name}</h3>
+                    <h6 className={"badge badge-info"}>{event.type === "campaign" ? "Fundraiser" : "Event"}</h6><h3>{event.name}</h3>
                 </div>
                 <div className={"card-body"}>
 
@@ -290,49 +294,55 @@ function EventDashboard(props) {
                                     }
                                 </div>
                             </div>
-                            <div className={"card-body"}>
-                                <div className={"d-flex"}>
+                            {
+                                update_event.loading ?
+                                <Loading>
+                                    <h2>Updating...</h2>
+                                </Loading>
+                                    :
+                                <div className={"card-body"}>
+                                    <div className={"d-flex"}>
 
-                                    <div className="input-group m-3">
-                                        <div className="input-group-prepend">
-                                            <span className="input-group-text bg-dark text-light">Public</span>
+                                        <div className="input-group m-3">
+                                            <div className="input-group-prepend">
+                                                <span className="input-group-text bg-dark text-light">Public</span>
+                                            </div>
+                                            {
+                                                EditMode === 'privacy' ?
+                                                    <select type="text" className="form-control" id="is_private" value={event.is_private} onChange={HandleUpdate}>
+                                                        <option value="false">Open</option>
+                                                        <option value="true">Closed</option>
+                                                    </select>
+                                                    :
+                                                    <input className={"form-control"} readOnly={true} value={event.is_private ? "Closed":"Open"}/>
+                                            }
                                         </div>
-                                        {
-                                            EditMode === 'privacy' ?
-                                                <select type="text" className="form-control" id="is_private" value={event.is_private} onChange={HandleUpdate}>
-                                                    <option value="false">Open</option>
-                                                    <option value="true">Closed</option>
-                                                </select>
-                                                :
-                                                <input className={"form-control"} readOnly={true} value={event.is_private ? "Closed":"Open"}/>
-                                        }
+
+                                        <div className="input-group m-3">
+                                            <div className="input-group-prepend">
+                                                <span className="input-group-text bg-dark text-light">Searchable</span>
+                                            </div>
+                                            {
+                                                EditMode === 'privacy' ?
+                                                    <select type="text" className="form-control" id="is_searchable" value={event.is_searchable} onChange={HandleUpdate}>
+                                                        <option value="true">Yes</option>
+                                                        <option value="false">No</option>
+                                                    </select>
+                                                    :
+                                                    <input className={"form-control"} readOnly={true} value={event.is_searchable ? "Yes":"No"}/>
+                                            }
+                                        </div>
+
                                     </div>
 
-                                    <div className="input-group m-3">
-                                        <div className="input-group-prepend">
-                                            <span className="input-group-text bg-dark text-light">Searchable</span>
-                                        </div>
+                                    <div className={"d-flex"}>
                                         {
-                                            EditMode === 'privacy' ?
-                                                <select type="text" className="form-control" id="is_searchable" value={event.is_searchable} onChange={HandleUpdate}>
-                                                    <option value="true">Yes</option>
-                                                    <option value="false">No</option>
-                                                </select>
-                                                :
-                                                <input className={"form-control"} readOnly={true} value={event.is_searchable ? "Yes":"No"}/>
+                                            (event.is_searchable && event.keywords && event.keywords.length > 0) ?
+                                                <Keywords values={event.keywords} dispatch={UpdateEvent} hideEdit={EditMode !== 'privacy'}/> : null
                                         }
                                     </div>
-
                                 </div>
-
-
-                                <div className={"d-flex"}>
-                                    {
-                                        (event.is_searchable && event.keywords && event.keywords.length > 0) ?
-                                            <Keywords values={event.keywords} dispatch={UpdateEvent} hideEdit={EditMode !== 'privacy'}/> : null
-                                    }
-                                </div>
-                            </div>
+                            }
                         </div> : null
                     }
 

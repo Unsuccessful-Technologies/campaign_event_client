@@ -1,7 +1,5 @@
 import React, {forwardRef, createRef, useEffect, useState} from 'react';
-import {BrowserRouter as Router, Switch, Route} from "react-router-dom";
-import {Provider, useDispatch} from "react-redux"
-import store from "./store"
+import {Switch, Route} from "react-router-dom";
 
 import Header from "./pages/common/header";
 import Footer from "./pages/common/footer";
@@ -12,7 +10,6 @@ import SearchResults from "./pages/SearchResults";
 import MemberProfile from "./pages/MemberProfile";
 import CustomProvider, {PrivateRoute} from "./components/hoc/CustomProvider";
 import Join from "./pages/Join";
-import {ActionTypes, GetProfile} from "./store/actions";
 
 function App() {
     const HeaderRef = forwardRef(Header)

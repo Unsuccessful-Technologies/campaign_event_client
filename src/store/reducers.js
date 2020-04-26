@@ -178,7 +178,9 @@ const Reducers = {
                 return {
                     ...state,
                     loading: true,
-                    error: null
+                    error: null,
+                    view_event: InitialState.Events.view_event,
+                    update_event: InitialState.Events.update_event
                 }
             }
             case SET_MY_EVENTS: {

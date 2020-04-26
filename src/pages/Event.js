@@ -9,7 +9,7 @@ import Checkout from "./Checkout";
 function Event(props) {
     const {event_id} = useParams()
     const Events = useSelector(state => state.Events)
-    const token = useSelector(state => state.User.token)
+    // const token = useSelector(state => state.User.token)
     const history = useHistory()
     const dispatch = useDispatch()
 

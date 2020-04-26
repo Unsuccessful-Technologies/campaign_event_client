@@ -171,7 +171,7 @@ export const ViewEvent = (payload) => {
 
 export const UpdateEvent = (payload) => {
     return async (dispatch, getState) => {
-        dispatch({type: ActionTypes.EVENT_START})
+        dispatch({type: ActionTypes.UPDATE_EVENT_START})
         const token = getState().User.token
         const event_id = getState().Events.view_event._id
         const options = {
@@ -192,6 +192,7 @@ export const UpdateEvent = (payload) => {
             }
             const {success} = result
             if(success){
+                dispatch({type:ActionTypes.UPDATE_EVENT_SUCCESS})
                 return dispatch(ViewEvent({event_id}))
             } else {
                 const error = new Error(result.message)
@@ -199,7 +200,7 @@ export const UpdateEvent = (payload) => {
             }
         } catch (e) {
             console.log(e)
-            return dispatch({type: ActionTypes.EVENT_FAIL, payload: e})
+            return dispatch({type: ActionTypes.UPDATE_EVENT_FAIL, payload: e})
         }
     }
 }
