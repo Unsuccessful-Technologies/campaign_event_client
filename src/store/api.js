@@ -7,5 +7,5 @@ export default {
     JoinURL: `${URL}/auth/join`,
     EventsURL: `${URL}/events`,
     ProfileURL: `${URL}/auth/profile`,
-    TokenValidateURL: (id) => `${URL}/auth/token/valid/${id}`
+    TokenValidateURL: (id) => `${URL}/auth/token/valid/${id}`,
 }

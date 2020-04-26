@@ -22,7 +22,10 @@ export const ActionTypes = {
     NEW_EVENT_CLEAR: "NEW_EVENT_CLEAR",
     GET_EVENT_SUCCESS: "GET_EVENT_SUCCESS",
     SET_MY_ORGS: "SET_MY_ORGS",
-    UPDATE_EVENT: "UPDATE_EVENT",
+    UPDATE_EVENT_START: "UPDATE_EVENT_START",
+    UPDATE_EVENT_SUCCESS: "UPDATE_EVENT_SUCCESS",
+    UPDATE_EVENT_FAIL: "UPDATE_EVENT_FAIL",
+
     LEAVE_VIEW_EVENT: "LEAVE_VIEW_EVENT"
 }
 
@@ -132,7 +135,7 @@ export const ViewEvent = (payload) => {
     return async (dispatch, getState) => {
         dispatch({type: ActionTypes.EVENT_START})
         const state = getState()
-        if(EventIsLocal(state.Events,event_id)){
+        if(EventIsLocal(state.Events,event_id) && false){
             const event = state.Events.my_events.filter(x => x._id === event_id)[0]
             dispatch({type:ActionTypes.GET_EVENT_SUCCESS, payload: event})
         } else {
@@ -197,6 +200,43 @@ export const UpdateEvent = (payload) => {
         } catch (e) {
             console.log(e)
             return dispatch({type: ActionTypes.EVENT_FAIL, payload: e})
+        }
+    }
+}
+
+export const UserToEvent = (action) => {
+    const {type, payload} = action
+    return async (dispatch, getState) => {
+        dispatch({type: ActionTypes.UPDATE_EVENT_START})
+        const token = getState().User.token
+        const event_id = getState().Events.view_event._id
+        const options = {
+            method: type === 'add' ? "POST" : type === 'delete' ? "DELETE" : "",
+            headers: {
+                "Content-Type":"application/json",
+                "token": token
+            },
+            body: JSON.stringify(payload)
+        }
+        try {
+            const response = await fetch(`${API.EventsURL}/user/${event_id}`, options)
+            const result = await response.json()
+            if(response.status !== 200) {
+                const error = new Error(result.message)
+                error.status = response.status
+                throw error
+            }
+            const {success} = result
+            if(success){
+                dispatch({type:ActionTypes.UPDATE_EVENT_SUCCESS})
+                return dispatch(ViewEvent({event_id}))
+            } else {
+                const error = new Error(`Something went wrong with ids ${JSON.stringify(result.ids)}`)
+                throw error
+            }
+        } catch (e) {
+            console.log(e)
+            return dispatch({type: ActionTypes.UPDATE_EVENT_FAIL, payload: e})
         }
     }
 }

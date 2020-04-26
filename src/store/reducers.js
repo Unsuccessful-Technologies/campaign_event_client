@@ -23,7 +23,12 @@ const InitialState = {
         error: null,
         my_events: [],
         new_event: null,
-        view_event: null
+        view_event: null,
+        update_event: {
+            loading: false,
+            error: null,
+            success: null
+        }
     },
     TokenValidation: {
         loading: true,
@@ -148,14 +153,25 @@ const Reducers = {
         }
     },
     Events: (state = InitialState.Events, action) => {
-        const {EVENT_START, NEW_EVENT_SUCCESS, EVENT_FAIL, SET_MY_EVENTS, GET_EVENT_SUCCESS, NEW_EVENT_CLEAR, LEAVE_VIEW_EVENT} = ActionTypes
+        const {
+            EVENT_START,
+            NEW_EVENT_SUCCESS,
+            EVENT_FAIL,
+            SET_MY_EVENTS,
+            GET_EVENT_SUCCESS,
+            NEW_EVENT_CLEAR,
+            LEAVE_VIEW_EVENT,
+            UPDATE_EVENT_START,
+            UPDATE_EVENT_SUCCESS,
+            UPDATE_EVENT_FAIL} = ActionTypes
         const {payload} = action
         switch (action.type) {
             case LEAVE_VIEW_EVENT: {
                 return {
                     ...state,
                     error: null,
-                    view_event: null
+                    view_event: InitialState.Events.view_event,
+                    update_event: InitialState.Events.update_event
                 }
             }
             case EVENT_START: {
@@ -192,7 +208,8 @@ const Reducers = {
                     ...state,
                     loading: false,
                     view_event: payload,
-                    error: null
+                    error: null,
+                    update_event: InitialState.Events.update_event
                 }
             }
             case EVENT_FAIL: {
@@ -200,6 +217,35 @@ const Reducers = {
                     ...state,
                     loading: false,
                     error: payload
+                }
+            }
+            case UPDATE_EVENT_START: {
+                return {
+                    ...state,
+                    update_event: {
+                        loading: true,
+                        error: null,
+                        success: null
+                    }
+                }
+            }
+            case UPDATE_EVENT_SUCCESS: {
+                return {
+                    ...state,
+                    update_event: {
+                        loading: false,
+                        success: true
+                    }
+                }
+            }
+            case UPDATE_EVENT_FAIL: {
+                return {
+                    ...state,
+                    update_event: {
+                        loading: false,
+                        error: payload,
+                        success: false
+                    }
                 }
             }
             default: return state
