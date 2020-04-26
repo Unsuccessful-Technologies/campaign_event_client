@@ -176,7 +176,7 @@ function EventDashboard(props) {
                             <div className={"d-flex"}>
                                 {
                                     (event.is_searchable && event.keywords && event.keywords.length > 0) ?
-                                        <Keywords values={event.keywords} dispatch={UpdateEvent}/> : null
+                                        <Keywords values={event.keywords} dispatch={UpdateEvent} hideEdit={EditMode !== 'privacy'}/> : null
                                 }
                             </div>
                         </div>

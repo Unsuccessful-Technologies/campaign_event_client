@@ -310,8 +310,7 @@ function EventDetails(props){
 }
 
 export function Keywords(props){
-    const {values, dispatch} = props
-
+    const {values, dispatch, hideEdit} = props
     const submitNewWord = (e) => {
         e.preventDefault()
         const value = e.target.keyword_new.value
@@ -340,10 +339,12 @@ export function Keywords(props){
     return (
         <div>
             <h4>Keywords</h4>
-            <form onSubmit={submitNewWord} className={"d-flex m-1"}>
-                <input id={"keyword_new"} placeholder={"Search Tag"} className={"form-control m-1"}/>
-                <button type={"submit"} className={"btn btn-sm btn-success m-1"}>Add</button>
-            </form>
+            {
+                hideEdit ? null : <form onSubmit={submitNewWord} className={"d-flex m-1"}>
+                    <input id={"keyword_new"} placeholder={"Search Tag"} className={"form-control m-1"}/>
+                    <button type={"submit"} className={"btn btn-sm btn-success m-1"}>Add</button>
+                </form>
+            }
             <div className={"w-100 d-flex flex-wrap"}>
             {
                 values.map((value) => {
