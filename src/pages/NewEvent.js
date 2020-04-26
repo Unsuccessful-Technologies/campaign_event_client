@@ -337,10 +337,10 @@ export function Keywords(props){
     }
 
     return (
-        <div>
+        <div style={{flex:1}}>
             <h4>Keywords</h4>
             {
-                hideEdit ? null : <form onSubmit={submitNewWord} className={"d-flex m-1"}>
+                hideEdit ? null : <form onSubmit={submitNewWord} className={"d-flex m-1 w-100"}>
                     <input id={"keyword_new"} placeholder={"Search Tag"} className={"form-control m-1"}/>
                     <button type={"submit"} className={"btn btn-sm btn-success m-1"}>Add</button>
                 </form>

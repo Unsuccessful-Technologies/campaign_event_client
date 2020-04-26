@@ -1,7 +1,7 @@
 import React, {useEffect, useState, useRef} from 'react';
 import {useParams, useHistory, Link} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
-import {ActionTypes, UserToEvent, ViewEvent} from "../store/actions";
+import {ActionTypes, UpdateEvent, UserToEvent, ViewEvent} from "../store/actions";
 import Loading from "./common/Loading";
 import {Keywords} from "./NewEvent";
 
@@ -66,7 +66,7 @@ function EventDashboard(props) {
         return update
     }
 
-    const UpdateEvent = (action) => {
+    const UpdateEventReducer = (action) => {
         const {payload} = action
         switch (action.type) {
             case "array_add": {
@@ -97,7 +97,6 @@ function EventDashboard(props) {
                 break;
             }
             case "submit": {
-                console.log(payload)
                 dispatch(UpdateEvent(payload))
                 break;
             }
@@ -114,17 +113,26 @@ function EventDashboard(props) {
                 value
             }
         }
-        UpdateEvent(action)
+        UpdateEventReducer(action)
     }
 
     const HandleSubmit = () => {
         const payload = GetValuesThatChanged()
         if(Object.keys(payload).length > 0){
             SetEditMode('submit')
-            UpdateEvent({type:"submit", payload})
+            UpdateEventReducer({type:"submit", payload})
         } else {
             SetEditMode("")
         }
+    }
+
+    const HandleCancel = () => {
+        if(event.isAdmin){
+            setLocalEvent({...view_event, isAdmin:true})
+        } else {
+            setLocalEvent(view_event)
+        }
+        SetEditMode('')
     }
 
     useEffect(() => {
@@ -285,7 +293,7 @@ function EventDashboard(props) {
                                         EditMode === 'privacy' ?
                                             <div>
                                                 <button className={"btn btn-sm btn-success m-2"} onClick={HandleSubmit}>Save</button>
-                                                <button className={"btn btn-sm btn-danger m-2"} onClick={() => SetEditMode('')}>Cancel</button>
+                                                <button className={"btn btn-sm btn-danger m-2"} onClick={HandleCancel}>Cancel</button>
                                             </div>
                                             :
                                             <div>
@@ -314,7 +322,7 @@ function EventDashboard(props) {
                                                         <option value="true">Closed</option>
                                                     </select>
                                                     :
-                                                    <input className={"form-control"} readOnly={true} value={event.is_private ? "Closed":"Open"}/>
+                                                    <input className={"form-control"} readOnly={true} value={event.is_private === "true" ? "Closed":"Open"}/>
                                             }
                                         </div>
 
@@ -329,7 +337,7 @@ function EventDashboard(props) {
                                                         <option value="false">No</option>
                                                     </select>
                                                     :
-                                                    <input className={"form-control"} readOnly={true} value={event.is_searchable ? "Yes":"No"}/>
+                                                    <input className={"form-control"} readOnly={true} value={event.is_searchable === "true" ? "Yes":"No"}/>
                                             }
                                         </div>
 
@@ -338,7 +346,7 @@ function EventDashboard(props) {
                                     <div className={"d-flex"}>
                                         {
                                             (event.is_searchable && event.keywords && event.keywords.length > 0) ?
-                                                <Keywords values={event.keywords} dispatch={UpdateEvent} hideEdit={EditMode !== 'privacy'}/> : null
+                                                <Keywords values={event.keywords} dispatch={UpdateEventReducer} hideEdit={EditMode !== 'privacy'}/> : null
                                         }
                                     </div>
                                 </div>

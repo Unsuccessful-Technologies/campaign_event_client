@@ -170,6 +170,7 @@ export const ViewEvent = (payload) => {
 }
 
 export const UpdateEvent = (payload) => {
+    console.log(payload)
     return async (dispatch, getState) => {
         dispatch({type: ActionTypes.UPDATE_EVENT_START})
         const token = getState().User.token
