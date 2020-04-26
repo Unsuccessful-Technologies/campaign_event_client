@@ -211,8 +211,8 @@ function EventDetails(props){
                             </div>
                             <select id={"type"} value={event.type.value} onChange={HandleChange} className={"custom-select"}>
                                 <option value={""}>Select an option</option>
-                                <option value={"ticketed"}>Ticketed</option>
-                                <option value={"campaign"}>Campaign</option>
+                                <option value={"ticketed"}>Ticketed Event</option>
+                                <option value={"campaign"}>Fundraising Campaign</option>
                             </select>
                         </div>
                         <input id={"name"} placeholder={(event.type.value === 'campaign')? "Campaign Name" : "Event's Name"} value={event.name.value} onChange={HandleChange} className={"form-control mb-2"}/>
@@ -226,7 +226,6 @@ function EventDetails(props){
                                             <span className={'input-group-text'}>Event Date</span>
                                         </div>
                                         <input id={"start_date"} type={"date"} value={event.start_date.value} onChange={HandleChange} className={"form-control"}/>
-                                        <h1 className={"text-danger"}>ADD REST OF ticketed INPUTS</h1>
                                     </div>
                                 </div>
                                 :
@@ -247,15 +246,25 @@ function EventDetails(props){
                                         </div>
                                         <div className={"input-group mb-2"}>
                                             <div className={"input-group-prepend"}>
-                                                <span className={'input-group-text'}>$</span>
+                                                <span className={'input-group-text'}>Set Goal Amount</span>
                                             </div>
-                                            <input id={"goal_amount"} type={"number"} placeholder={"Amount to raise"} value={event.goal_amount.value} onChange={HandleChange} className={"form-control"}/>
-                                            <div className={"input-group-append"}>
-                                                <span className={'input-group-text'}>.00</span>
-                                            </div>
+                                            <select id={"has_goal"} value={event.has_goal.value} onChange={HandleChange} className={"custom-select"}>
+                                                <option value={""}>Select an option</option>
+                                                <option value={"true"}>Yes</option>
+                                                <option value={"false"}>No</option>
+                                            </select>
                                         </div>
-
-                                        <h1 className={"text-danger"}>ADD REST OF Fundraising INPUTS</h1>
+                                        {
+                                            event.has_goal.value === "true" ? <div className={"input-group mb-2"}>
+                                                <div className={"input-group-prepend"}>
+                                                    <span className={'input-group-text'}>$</span>
+                                                </div>
+                                                <input id={"goal_amount"} type={"number"} placeholder={"Amount to raise"} value={event.goal_amount.value} onChange={HandleChange} className={"form-control"}/>
+                                                <div className={"input-group-append"}>
+                                                    <span className={'input-group-text'}>.00</span>
+                                                </div>
+                                            </div> : null
+                                        }
                                     </div>
                                     : null
                         }
@@ -435,6 +444,12 @@ const initialFormState = {
             validation: BasicValidation
         },
         is_searchable: {
+            value: "",
+            isValid: false,
+            isTouched: false,
+            validation: BasicValidation
+        },
+        has_goal: {
             value: "",
             isValid: false,
             isTouched: false,
