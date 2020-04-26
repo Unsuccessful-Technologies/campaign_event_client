@@ -1,6 +1,6 @@
 import React, {useEffect, useReducer, useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
-import {Switch, Route, Link, useRouteMatch, useParams, useHistory} from "react-router-dom";
+import {Switch, Route, Link, useRouteMatch, useParams, useHistory, Redirect} from "react-router-dom";
 import {ActionTypes, GetProfile, SubmitEvent} from "../store/actions";
 import Loading from "./common/Loading";
 
@@ -63,13 +63,14 @@ function LoggedIn(props){
             <div>
                 <ul className={'nav justify-content-center'}>
                     <li className={"nav-item m-4 p-2"}><Link to={`${url}`}>Organization Details</Link></li>
-                    <li className={"nav-item m-4 p-2"}><Link to={`${url}/eventDetails`}>Event Details</Link></li>
+                    {/*// TODO Disable link if org is new and not filled out*/}
+                    <li className={"nav-item m-4 p-2"}>{NewEventForm.organization_id === null ? <p>Event Details</p>: <Link to={`${url}/eventDetails`}>Event Details</Link>}</li>
                 </ul>
             </div>
             <div>
                 <Switch>
                     <Route exact path={`${path}`}><ChoseOrg NewEventForm={NewEventForm} NewEventDispatch={NewEventDispatch} url={url}/></Route>
-                    <Route exact path={`${path}/eventDetails`} exact><EventDetails NewEventForm={NewEventForm} NewEventDispatch={NewEventDispatch} submit={HandleSubmit}/></Route>
+                    <Route exact path={`${path}/eventDetails`}><EventDetails url={url} NewEventForm={NewEventForm} NewEventDispatch={NewEventDispatch} submit={HandleSubmit}/></Route>
                 </Switch>
             </div>
         </div>
@@ -178,7 +179,7 @@ function ChoseOrg(props){
 }
 
 function EventDetails(props){
-    const {NewEventForm, NewEventDispatch, submit} = props
+    const {NewEventForm, NewEventDispatch, submit, url} = props
     const {event} = NewEventForm
 
     const HandleChange = (e) => {
@@ -192,6 +193,10 @@ function EventDetails(props){
             }
         }
         NewEventDispatch(action)
+    }
+
+    if(NewEventForm.organization_id === null){
+        return (<Redirect to={url}/>)
     }
 
     return (
@@ -221,7 +226,7 @@ function EventDetails(props){
                                             <span className={'input-group-text'}>Event Date</span>
                                         </div>
                                         <input id={"start_date"} type={"date"} value={event.start_date.value} onChange={HandleChange} className={"form-control"}/>
-                                        <h1 className={"text-danger"}>ADD REST OF TICKETED INPUTS</h1>
+                                        <h1 className={"text-danger"}>ADD REST OF ticketed INPUTS</h1>
                                     </div>
                                 </div>
                                 :
@@ -250,7 +255,7 @@ function EventDetails(props){
                                             </div>
                                         </div>
 
-                                        <h1 className={"text-danger"}>ADD REST OF CAMPAIGN INPUTS</h1>
+                                        <h1 className={"text-danger"}>ADD REST OF Fundraising INPUTS</h1>
                                     </div>
                                     : null
                         }
