@@ -3,6 +3,7 @@ import {useParams, useHistory, Link} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {ActionTypes, UserToEvent, ViewEvent} from "../store/actions";
 import Loading from "./common/Loading";
+import {Keywords} from "./NewEvent";
 
 function EventDashboard(props) {
     const {event_id} = useParams()
@@ -18,6 +19,7 @@ function EventDashboard(props) {
         admin: useRef(),
         member: useRef()
     }
+    const KeywordInput = useRef()
 
     const RemoveUser = (action) => {
         const {type, index} = action
@@ -41,8 +43,30 @@ function EventDashboard(props) {
         dispatch(UserToEvent({type: "add", payload}))
     }
 
-    const UpdateEvent = (payload) => {
-
+    const UpdateEvent = (action) => {
+        const {payload} = action
+        switch (action.type) {
+            case "array_add": {
+                const {key,value} = payload
+                const newArr = [...event[key]]
+                newArr.push(value)
+                setLocalEvent({
+                    ...event,
+                    [key]:newArr
+                })
+                break;
+            }
+            case "array_remove": {
+                const { key, value } = payload
+                const newArr = event[key].filter(x => x !== value)
+                setLocalEvent({
+                    ...event,
+                    [key]:newArr
+                })
+                break;
+            }
+            default: return
+        }
     }
 
     useEffect(() => {
@@ -95,6 +119,7 @@ function EventDashboard(props) {
                     <h3>{event.name}</h3>
                 </div>
                 <div className={"card-body"}>
+
                     <div className={"card dark-bg shadow-lg m-3"}>
                         <div className={"card-header"}>
                             <h4 className={"d-inline-block"}>Privacy</h4>
@@ -113,19 +138,102 @@ function EventDashboard(props) {
                             </div>
                         </div>
                         <div className={"card-body"}>
-                            <div className="input-group mb-3">
-                                <div className="input-group-prepend">
-                                    <span className="input-group-text bg-dark text-light">Public</span>
+                            <div className={"d-flex"}>
+
+                                <div className="input-group m-3">
+                                    <div className="input-group-prepend">
+                                        <span className="input-group-text bg-dark text-light">Public</span>
+                                    </div>
+                                    {
+                                        EditMode === 'privacy' ?
+                                            <select type="text" className="form-control" id="is_private" value={event.is_private}>
+                                                <option value="false">Open</option>
+                                                <option value="true">Closed</option>
+                                            </select>
+                                            :
+                                            <input className={"form-control"} readOnly={true} value={event.is_private ? "Closed":"Open"}/>
+                                    }
                                 </div>
+
+                                <div className="input-group m-3">
+                                    <div className="input-group-prepend">
+                                        <span className="input-group-text bg-dark text-light">Searchable</span>
+                                    </div>
+                                    {
+                                        EditMode === 'privacy' ?
+                                            <select type="text" className="form-control" id="is_searchable" value={event.is_searchable}>
+                                                <option value="true">Yes</option>
+                                                <option value="false">No</option>
+                                            </select>
+                                            :
+                                            <input className={"form-control"} readOnly={true} value={event.is_searchable ? "Yes":"No"}/>
+                                    }
+                                </div>
+
+                            </div>
+
+
+                            <div className={"d-flex"}>
+                                {
+                                    (event.is_searchable && event.keywords && event.keywords.length > 0) ?
+                                        <Keywords values={event.keywords} dispatch={UpdateEvent}/> : null
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className={"card dark-bg shadow-lg m-3"}>
+                        <div className={"card-header"}>
+                            <h4 className={"d-inline-block"}>Privacy</h4>
+                            <div className={"float-right"}>
                                 {
                                     EditMode === 'privacy' ?
-                                        <select type="text" className="form-control" id="is_private" value={event.is_private}>
-                                            <option value="false">Yes</option>
-                                            <option value="true">No</option>
-                                        </select>
+                                        <div>
+                                            <button className={"btn btn-sm btn-success m-2"} onClick={() => SetEditMode('submit')}>Save</button>
+                                            <button className={"btn btn-sm btn-danger m-2"} onClick={() => SetEditMode('')}>Cancel</button>
+                                        </div>
                                         :
-                                        <input className={"form-control"} readOnly={true} value={event.is_private ? "No":"Yes"}/>
+                                        <div>
+                                            <button className={"btn btn-sm btn-primary"} onClick={() => SetEditMode('privacy')}>Edit</button>
+                                        </div>
                                 }
+                            </div>
+                        </div>
+                        <div className={"card-body"}>
+                            <div className={"d-flex"}>
+
+
+                                <div className="input-group m-3">
+                                    <div className="input-group-prepend">
+                                        <span className="input-group-text bg-dark text-light">Public</span>
+                                    </div>
+                                    {
+                                        EditMode === 'privacy' ?
+                                            <select type="text" className="form-control" id="is_private" value={event.is_private}>
+                                                <option value="false">Open</option>
+                                                <option value="true">Closed</option>
+                                            </select>
+                                            :
+                                            <input className={"form-control"} readOnly={true} value={event.is_private ? "Closed":"Open"}/>
+                                    }
+                                </div>
+
+
+                                <div className="input-group m-3">
+                                    <div className="input-group-prepend">
+                                        <span className="input-group-text bg-dark text-light">Searchable</span>
+                                    </div>
+                                    {
+                                        EditMode === 'privacy' ?
+                                            <select type="text" className="form-control" id="is_searchable" value={event.is_searchable}>
+                                                <option value="true">Yes</option>
+                                                <option value="false">No</option>
+                                            </select>
+                                            :
+                                            <input className={"form-control"} readOnly={true} value={event.is_searchable ? "Yes":"No"}/>
+                                    }
+                                </div>
+
                             </div>
                             <div className={"d-flex"}>
                                 <div className="m-3" style={{flex:1, maxHeight: "400px"}}>
@@ -134,10 +242,10 @@ function EventDashboard(props) {
                                     </div>
                                     <table className={"table table-dark w-100"}>
                                         <thead>
-                                            <tr>
-                                                <th scope="col">Email</th>
-                                                <th scope="col" className={"text-center"}><button className={"btn btn-sm btn-success"} onClick={() => setAddUser({type:"admin"})}>Add</button></th>
-                                            </tr>
+                                        <tr>
+                                            <th scope="col">Email</th>
+                                            <th scope="col" className={"text-center"}><button className={"btn btn-sm btn-success"} onClick={() => setAddUser({type:"admin"})}>Add</button></th>
+                                        </tr>
                                         </thead>
                                         <tbody>
                                         {
@@ -169,29 +277,43 @@ function EventDashboard(props) {
                                 <div className="m-3" style={{flex:1, maxHeight: "400px"}}>
                                     <div className={"d-flex justify-content-between"}>
                                         <h5>Members</h5>
-                                        <button className={"btn btn-sm btn-success"}>Add Member</button>
                                     </div>
-                                    <div className={"d-flex flex-row flex-wrap"}>
+                                    <table className={"table table-dark w-100"}>
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">Email</th>
+                                            <th scope="col" className={"text-center"}><button className={"btn btn-sm btn-success"} onClick={() => setAddUser({type:"member"})}>Add</button></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
                                         {
-                                            event.members.map(x => {
+                                            event.members.map((x,i) => {
                                                 return (
-                                                    <div className={"card bg-dark m-3 p-3 pt-4 position-relative"}>
-                                                        <p style={{textTransform:"capitalize"}}>{x.fName} {x.lName}</p>
-                                                        <p>{x.email}</p>
-                                                        {
-                                                            (EditMode === 'privacy') ?
-                                                                <div className={"position-absolute p-1 text-danger"} style={{top:0, right: "5%", cursor:"pointer"}}>&times;</div>
-                                                                : ""
-                                                        }
-                                                    </div>
+                                                    <tr key={`member_${i}`}>
+                                                        <td>{x.email}</td>
+                                                        <td
+                                                            className={"text-danger text-center"}
+                                                            style={{cursor:"pointer"}}
+                                                            onClick={() => RemoveUser({type:"admin",index: i} )}>&times;</td>
+                                                    </tr>
                                                 )
                                             })
                                         }
-                                    </div>
+                                        {
+                                            addUser.type === 'member' ?
+                                                <tr>
+                                                    <td><input ref={EmailInputs.admin} className={'form-control'} placeholder={"Email"}/></td>
+                                                    <td><button onClick={AddUser} className={"btn btn-sm btn-primary"}>Submit</button></td>
+                                                </tr>
+                                                : null
+                                        }
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
                     </div>
+
                     <div className={"card dark-bg shadow-lg m-3"}>
                         <div className={"card-header"}>
                             <h4>Event Information</h4>

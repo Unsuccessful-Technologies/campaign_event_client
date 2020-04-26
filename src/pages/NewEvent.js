@@ -199,7 +199,7 @@ function EventDetails(props){
             <div className={"p-3"}>
                 <div className={"d-flex flex-row p-3 m-1"}>
                     <div className={"card dark-bg w-50 p-4 m-1"}>
-                        <h3>{(event.type.value === 'campaign')? "Campaign Details" : "Event Details"}</h3>
+                        <h3>{(event.type.value === 'campaign')? "Fundraising Details" : "Event Details"}</h3>
                         <div className={"input-group mb-2"}>
                             <div className={"input-group-prepend"}>
                                 <span className={'input-group-text'}>Event Type</span>
@@ -213,25 +213,9 @@ function EventDetails(props){
                         <input id={"name"} placeholder={(event.type.value === 'campaign')? "Campaign Name" : "Event's Name"} value={event.name.value} onChange={HandleChange} className={"form-control mb-2"}/>
                         <textarea rows={6} id={"description"} placeholder={"Description"} value={event.description.value} onChange={HandleChange} className={"form-control mb-2"}/>
 
-                        <div className={"input-group mb-2"}>
-                            <div className={"input-group-prepend"}>
-                                <span className={'input-group-text'}>Private</span>
-                            </div>
-                            <select id={"is_private"} value={event.is_private.value} onChange={HandleChange} className={"custom-select"}>
-                                <option value={""}>Select an option</option>
-                                <option value={true}>Yes</option>
-                                <option value={false}>No</option>
-                            </select>
-                        </div>
-                        {
-                            (event.is_private.value === "false") ? <Keywords values={event.keywords.value} dispatch={NewEventDispatch}/> : ""
-                        }
-                    </div>
-                    <div className={"card dark-bg w-50 p-4 m-1"}>
                         {
                             (event.type.value === 'ticketed') ?
                                 <div>
-                                    <h3>Ticketed Inputs</h3>
                                     <div className={"input-group mb-2"}>
                                         <div className={"input-group-prepend"}>
                                             <span className={'input-group-text'}>Event Date</span>
@@ -243,7 +227,6 @@ function EventDetails(props){
                                 :
                                 (event.type.value === 'campaign') ?
                                     <div>
-                                        <h3>Campaign Inputs</h3>
                                         <div className={"input-group mb-2"}>
                                             <div className={"input-group-prepend"}>
                                                 <span className={'input-group-text'}>Start Date</span>
@@ -269,9 +252,37 @@ function EventDetails(props){
 
                                         <h1 className={"text-danger"}>ADD REST OF CAMPAIGN INPUTS</h1>
                                     </div>
-                                    :
-                                    <div><h2>Select an event type</h2></div>
+                                    : null
                         }
+
+
+                    </div>
+                    <div className={"card dark-bg w-50 p-4 m-1"}>
+                        <h3>Privacy</h3>
+                        <div className={"input-group mb-2"}>
+                            <div className={"input-group-prepend"}>
+                                <span className={'input-group-text'}>Open To Public</span>
+                            </div>
+                            <select id={"is_private"} value={event.is_private.value} onChange={HandleChange} className={"custom-select"}>
+                                <option value={""}>Select an option</option>
+                                <option value={false}>Yes</option>
+                                <option value={true}>No</option>
+                            </select>
+                        </div>
+                        <div className={"input-group mb-2"}>
+                            <div className={"input-group-prepend"}>
+                                <span className={'input-group-text'}>Searchable</span>
+                            </div>
+                            <select id={"is_searchable"} value={event.is_searchable.value} onChange={HandleChange} className={"custom-select"}>
+                                <option value={""}>Select an option</option>
+                                <option value={true}>Yes</option>
+                                <option value={false}>No</option>
+                            </select>
+                        </div>
+                        {
+                            (event.is_searchable.value === "true") ? <Keywords values={event.keywords.value} dispatch={NewEventDispatch}/> : ""
+                        }
+
                     </div>
                     {/* TODO Add keywords pictures and contacts*/}
                 </div>
@@ -293,7 +304,7 @@ function EventDetails(props){
     )
 }
 
-function Keywords(props){
+export function Keywords(props){
     const {values, dispatch} = props
 
     const submitNewWord = (e) => {
@@ -323,10 +334,10 @@ function Keywords(props){
 
     return (
         <div>
-            <h4>Keywords <span><div className={"badge badge-secondary"}>optional</div></span></h4>
+            <h4>Keywords</h4>
             <form onSubmit={submitNewWord} className={"d-flex m-1"}>
-                <input id={"keyword_new"} placeholder={"Search Tag"} className={"form-control"}/>
-                <button type={"submit"} className={"btn btn-sm btn-success"}>Add</button>
+                <input id={"keyword_new"} placeholder={"Search Tag"} className={"form-control m-1"}/>
+                <button type={"submit"} className={"btn btn-sm btn-success m-1"}>Add</button>
             </form>
             <div className={"w-100 d-flex flex-wrap"}>
             {
@@ -405,6 +416,12 @@ const initialFormState = {
             validation: BasicValidation
         },
         is_private: {
+            value: "",
+            isValid: false,
+            isTouched: false,
+            validation: BasicValidation
+        },
+        is_searchable: {
             value: "",
             isValid: false,
             isTouched: false,
