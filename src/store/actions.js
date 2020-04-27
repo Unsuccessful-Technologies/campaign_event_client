@@ -25,8 +25,11 @@ export const ActionTypes = {
     UPDATE_EVENT_START: "UPDATE_EVENT_START",
     UPDATE_EVENT_SUCCESS: "UPDATE_EVENT_SUCCESS",
     UPDATE_EVENT_FAIL: "UPDATE_EVENT_FAIL",
+    LEAVE_VIEW_EVENT: "LEAVE_VIEW_EVENT",
+    PUBLIC_EVENTS_START: "PUBLIC_EVENTS_START",
+    PUBLIC_EVENTS_SUCCESS: "PUBLIC_EVENTS_SUCCESS",
+    PUBLIC_EVENTS_FAIL: "PUBLIC_EVENTS_FAIL"
 
-    LEAVE_VIEW_EVENT: "LEAVE_VIEW_EVENT"
 }
 
 export const SubmitLogin = (payload) => {
@@ -271,6 +274,38 @@ export const GetProfile = () => {
         }
     }
 }
+
+export const GetPublicEvents = () => {
+    return async (dispatch) => {
+        dispatch({type: ActionTypes.PUBLIC_EVENTS_START})
+        const options = {
+            method: "GET",
+            headers: {
+                "Content-Type":"application/json"
+            }
+        }
+        try {
+            const response = await fetch(API.EventsURL, options)
+            const result = await response.json()
+            if(response.status !== 200) {
+                const error = {
+                    message: result.message || "Something Went Wrong getting Public Events.",
+                    status: response.status
+                }
+                throw error
+            }
+            if(Array.isArray(result)){
+                dispatch({type: ActionTypes.PUBLIC_EVENTS_SUCCESS, payload: result})
+            } else {
+                dispatch({type: ActionTypes.PUBLIC_EVENTS_SUCCESS, payload: []})
+            }
+        } catch (e) {
+            console.error(e)
+            return dispatch({type: ActionTypes.PUBLIC_EVENTS_FAIL, payload: e})
+        }
+    }
+}
+
 
 export const ValidateToken = (payload) => {
     console.debug('ValidateToken',payload)

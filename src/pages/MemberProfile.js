@@ -47,6 +47,7 @@ function MemberProfile(props) {
                             return (
                                 <div className={"card dark-bg m-2"} key={event._id} style={{flex:1}}>
                                     <div className={"card-header"}>
+                                        <h6 className={"badge badge-info"}>{event.type === "campaign" ? "Fundraiser" : "Event"}</h6>
                                         <h3 style={{textTransform: "capitalize"}}>{event.name}</h3>
                                     </div>
                                     <div className={"card-body"}>

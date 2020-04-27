@@ -30,6 +30,11 @@ const InitialState = {
             success: null
         }
     },
+    PublicEvents: {
+        loading: false,
+        data: [],
+        error: null
+    },
     TokenValidation: {
         loading: true,
         error: null,
@@ -270,6 +275,32 @@ const Reducers = {
                     loading: false,
                     error: payload,
                     data: {allowed: false}
+                }
+            }
+            default: return state
+        }
+    },
+    PublicEvents: (state = InitialState.PublicEvents, action) => {
+        const { payload } = action
+        switch (action.type) {
+            case ActionTypes.PUBLIC_EVENTS_START: {
+                return {
+                    ...state,
+                    loading: true,
+                }
+            }
+            case ActionTypes.PUBLIC_EVENTS_SUCCESS: {
+                return {
+                    ...state,
+                    loading: false,
+                    data: payload
+                }
+            }
+            case ActionTypes.PUBLIC_EVENTS_FAIL: {
+                return {
+                    ...state,
+                    loading: false,
+                    error: payload
                 }
             }
             default: return state
