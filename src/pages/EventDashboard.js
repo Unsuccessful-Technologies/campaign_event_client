@@ -44,16 +44,19 @@ function EventDashboard(props) {
 
     const GetValuesThatChanged = () => {
         const update = {}
-        Object.keys(view_event).forEach(key => {
+        Object.keys(event).forEach(key => {
             if(typeof event[key] === 'string' && view_event[key] !== event[key]){
                 update[key] = event[key]
             }
             if(Array.isArray(event[key])){
-                let org_length = view_event[key].length
+                console.log(event[key])
+                let org_length = view_event[key] ? view_event[key].length : 0
                 let new_length = event[key].length
                 let same = true
                 event[key].forEach(item => {
-                    same = same && view_event[key].includes(item)
+                    if(view_event[key]){
+                        same = same && view_event[key].includes(item)
+                    }
                 })
                 if(org_length !== new_length){
                     same = false
@@ -71,7 +74,7 @@ function EventDashboard(props) {
         switch (action.type) {
             case "array_add": {
                 const {key,value} = payload
-                const newArr = [...event[key]]
+                const newArr = event[key] ? [...event[key]] : []
                 newArr.push(value)
                 setLocalEvent({
                     ...event,
@@ -151,10 +154,9 @@ function EventDashboard(props) {
             const member_ids = members.map(x => x._id)
             const isAdmin = admin_ids.includes(UserID)
             const isMember = member_ids.includes(UserID)
-
+            console.log(view_event)
             if(isAdmin) {
                 setLocalEvent({...view_event, isAdmin})
-
             } else if(isMember) {
                 setLocalEvent({...view_event})
             } else {
@@ -311,41 +313,15 @@ function EventDashboard(props) {
                                 <div className={"card-body"}>
                                     <div className={"d-flex"}>
 
-                                        <div className="input-group m-3">
-                                            <div className="input-group-prepend">
-                                                <span className="input-group-text bg-dark text-light">Public</span>
-                                            </div>
-                                            {
-                                                EditMode === 'privacy' ?
-                                                    <select type="text" className="form-control" id="is_private" value={event.is_private} onChange={HandleUpdate}>
-                                                        <option value="false">Open</option>
-                                                        <option value="true">Closed</option>
-                                                    </select>
-                                                    :
-                                                    <input className={"form-control"} readOnly={true} value={event.is_private === "true" ? "Closed":"Open"}/>
-                                            }
-                                        </div>
+                                        <MyInput editType={"privacy"} name={"Public"} id={"is_private"} type={"boolean"} options={{true:"Close",false:"Open"}} event={event} EditMode={EditMode} HandleUpdate={HandleUpdate}/>
 
-                                        <div className="input-group m-3">
-                                            <div className="input-group-prepend">
-                                                <span className="input-group-text bg-dark text-light">Searchable</span>
-                                            </div>
-                                            {
-                                                EditMode === 'privacy' ?
-                                                    <select type="text" className="form-control" id="is_searchable" value={event.is_searchable} onChange={HandleUpdate}>
-                                                        <option value="true">Yes</option>
-                                                        <option value="false">No</option>
-                                                    </select>
-                                                    :
-                                                    <input className={"form-control"} readOnly={true} value={event.is_searchable === "true" ? "Yes":"No"}/>
-                                            }
-                                        </div>
+                                        <MyInput editType={"privacy"} name={"Seachable"} id={"is_searchable"} type={"boolean"} options={{true:"Yes",false:"No"}} event={event} EditMode={EditMode} HandleUpdate={HandleUpdate}/>
 
                                     </div>
 
                                     <div className={"d-flex"}>
                                         {
-                                            (event.is_searchable && event.keywords && event.keywords.length > 0) ?
+                                            ((event.is_searchable === true || event.is_searchable === "true")) ?
                                                 <Keywords values={event.keywords} dispatch={UpdateEventReducer} hideEdit={EditMode !== 'privacy'}/> : null
                                         }
                                     </div>
@@ -358,14 +334,39 @@ function EventDashboard(props) {
                         event.isAdmin ? <div className={"card dark-bg shadow-lg m-3"}>
                             <div className={"card-header"}>
                                 <h4>Event Information</h4>
+                                <div className={"float-right"}>
+                                    {
+                                        EditMode === 'event_info' ?
+                                            <div>
+                                                <button className={"btn btn-sm btn-success m-2"} onClick={HandleSubmit}>Save</button>
+                                                <button className={"btn btn-sm btn-danger m-2"} onClick={HandleCancel}>Cancel</button>
+                                            </div>
+                                            :
+                                            <div>
+                                                <button className={"btn btn-sm btn-primary"} onClick={() => SetEditMode('event_info')}>Edit</button>
+                                            </div>
+                                    }
+                                </div>
                             </div>
                             <div className={"card-body"}>
-                                <p>Name: {event.name}</p>
-                                <p>Type: {event.type}</p>
-                                <p>Description: {event.description}</p>
-                                <p>Start: {event.start_date}</p>
-                                <p>End: {event.start_date}</p>
-                                <p>Goal: $ {event.goal_amount}.00</p>
+                                <MyInput editType={"event_info"} name={"Name"} id={"name"} event={event} EditMode={EditMode} HandleUpdate={HandleUpdate}/>
+                                <MyInput editType={"event_info"} name={"Description"} id={"description"} type={"textarea"} event={event} EditMode={EditMode} HandleUpdate={HandleUpdate}/>
+                                <MyInput editType={"event_info"} name={event.type === "campaign" ? "Start" : "Date"} id={"start_date"} type={"date"} event={event} EditMode={EditMode} HandleUpdate={HandleUpdate}/>
+                                {
+                                    event.type === "campaign" ?
+                                        <MyInput editType={"event_info"} name={"End"} id={"end_date"} type={"date"} event={event} EditMode={EditMode} HandleUpdate={HandleUpdate}/>
+                                        : null
+                                }
+                                {
+                                    event.type === "campaign" ?
+                                        <MyInput editType={"event_info"} name={"Set Goal Amount"} id={"has_goal"} type={"boolean"} options={{true:"Yes",false:"No"}} event={event} EditMode={EditMode} HandleUpdate={HandleUpdate}/>
+                                        : null
+                                }
+                                {
+                                    ( event.type === "campaign" && (event.has_goal === "true" || event.has_goal === true) ) ?
+                                        <MyInput editType={"event_info"} name={"Goal"} id={"goal_amount"} type={"number"} event={event} EditMode={EditMode} HandleUpdate={HandleUpdate}/>
+                                        : null
+                                }
                             </div>
                         </div> : null
                     }
@@ -376,3 +377,38 @@ function EventDashboard(props) {
 }
 
 export default EventDashboard;
+
+const MyInput = (props) => {
+    const { name, id, event, EditMode, HandleUpdate, type, options, editType } = props
+
+    return (
+        <div className="m-3 d-flex">
+            <div className="input-group-prepend" style={{flex:1}}>
+                <span className="input-group-text bg-dark text-light w-100">{name}</span>
+            </div>
+            <div style={{flex:3}}>
+                {
+                    EditMode === editType ?
+                        type === "boolean" ?
+                            <select type="text" className="form-control" id={id} value={event[id]} onChange={HandleUpdate}>
+                                <option value="true">{options.true}</option>
+                                <option value="false">{options.false}</option>
+                            </select>
+                            :
+                            type === "textarea" ?
+                                <textarea rows={5} className="form-control" id={id} value={event[id]} onChange={HandleUpdate}/>
+                                :
+                                <input type={type||"text"} className="form-control" id={id} value={event[id]} onChange={HandleUpdate}/>
+                        :
+                        type === "boolean" ?
+                            <input className={"form-control"} readOnly={true} value={ (event[id] === "true" || event[id] === true)  ? options.true:options.false}/>
+                            :
+                            type === "textarea" ?
+                                <textarea rows={5} className="form-control" id={id} value={event[id]} readOnly={true}/>
+                                :
+                                <input className={"form-control"} readOnly={true} value={event[id]}/>
+                }
+            </div>
+        </div>
+    )
+}

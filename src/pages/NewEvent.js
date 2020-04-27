@@ -356,7 +356,7 @@ export function Keywords(props){
             }
             <div className={"w-100 d-flex flex-wrap"}>
             {
-                values.map((value, i) => {
+                values ? values.map((value, i) => {
                     return (
                         <div key={`keyword_${i}`} className={"m-1"}>
                             <h5>
@@ -369,7 +369,7 @@ export function Keywords(props){
                             </h5>
                         </div>
                     )
-                })
+                }) : null
             }
             </div>
         </div>
