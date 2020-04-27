@@ -53,7 +53,7 @@ export const SubmitLogin = (payload) => {
             window.sessionStorage.setItem('user', JSON.stringify({user,token}))
             return dispatch({type: ActionTypes.LOGIN_SUCCESS, payload: {user, token}})
         } catch (e) {
-            console.log(e)
+            console.error(e)
             return dispatch({type: ActionTypes.LOGIN_FAIL, payload: e})
         }
     }
@@ -82,7 +82,7 @@ export const SubmitJoin = (payload) => {
                 return dispatch({type: ActionTypes.JOIN_FAIL, payload: result.message})
             }
         } catch (e) {
-            console.log(e)
+            console.error(e)
             return dispatch({type: ActionTypes.JOIN_FAIL, payload: e.message})
         }
     }
@@ -113,7 +113,7 @@ export const SubmitEvent = (payload) => {
                 return dispatch({type: ActionTypes.EVENT_FAIL, payload: result.message})
             }
         } catch (e) {
-            console.log(e)
+            console.error(e)
             return dispatch({type: ActionTypes.EVENT_FAIL, payload: e.message})
         }
     }
@@ -161,7 +161,7 @@ export const ViewEvent = (payload) => {
                 }
                 return dispatch({type: ActionTypes.GET_EVENT_SUCCESS, payload: result})
             } catch (e) {
-                console.log(e)
+                console.error(e)
                 return dispatch({type: ActionTypes.EVENT_FAIL, payload: {status: e.status, message: e.message}})
             }
         }
@@ -170,7 +170,6 @@ export const ViewEvent = (payload) => {
 }
 
 export const UpdateEvent = (payload) => {
-    console.log(payload)
     return async (dispatch, getState) => {
         dispatch({type: ActionTypes.UPDATE_EVENT_START})
         const token = getState().User.token
@@ -200,7 +199,7 @@ export const UpdateEvent = (payload) => {
                 throw error
             }
         } catch (e) {
-            console.log(e)
+            console.error(e)
             return dispatch({type: ActionTypes.UPDATE_EVENT_FAIL, payload: e})
         }
     }
@@ -237,7 +236,7 @@ export const UserToEvent = (action) => {
                 throw error
             }
         } catch (e) {
-            console.log(e)
+            console.error(e)
             return dispatch({type: ActionTypes.UPDATE_EVENT_FAIL, payload: e})
         }
     }
@@ -267,7 +266,7 @@ export const GetProfile = () => {
             dispatch({type: ActionTypes.SET_MY_ORGS, payload: organizations})
             return dispatch({type: ActionTypes.GET_PROFILE_SUCCESS})
         } catch (e) {
-            console.log(e)
+            console.error(e)
             return dispatch({type: ActionTypes.GET_PROFILE_FAIL, payload: e})
         }
     }
@@ -292,7 +291,7 @@ export const ValidateToken = (payload) => {
             const result = await response.json()
             return dispatch({type: ActionTypes.TOKEN_VALID_SUCCESS, payload: result})
         } catch (e) {
-            console.log(e)
+            console.error(e)
             return dispatch({type: ActionTypes.TOKEN_VALID_FAIL, payload: e.message})
         }
     }

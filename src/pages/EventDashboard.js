@@ -49,7 +49,6 @@ function EventDashboard(props) {
                 update[key] = event[key]
             }
             if(Array.isArray(event[key])){
-                console.log(event[key])
                 let org_length = view_event[key] ? view_event[key].length : 0
                 let new_length = event[key].length
                 let same = true
@@ -154,7 +153,6 @@ function EventDashboard(props) {
             const member_ids = members.map(x => x._id)
             const isAdmin = admin_ids.includes(UserID)
             const isMember = member_ids.includes(UserID)
-            console.log(view_event)
             if(isAdmin) {
                 setLocalEvent({...view_event, isAdmin})
             } else if(isMember) {
